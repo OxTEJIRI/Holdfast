@@ -1,0 +1,240 @@
+{
+  "cluster": "localnet",
+  "rpc": "http://127.0.0.1:8899",
+  "startedAt": "2026-10-09T15:20:14.751Z",
+  "keys": {
+    "wallet": "5p5eiCR1oXzucmnSUNVpvkGMgapMgyTnmMYu6bYBGAL4",
+    "config": "FCq9e2EgUn473guHmHUuor5hdveekMvh3hyiBmDNcm6u",
+    "mint": "BtWgggA3mfzjj46PEuJf1YjjMxkrJVPmKSfq3vTw5L6G",
+    "pool": "FRe6h3otd1ehjCgAtbUYSsMt7WntMrBruKjVkmmw1oUH",
+    "feeVault": "EDNrzuF6MXbaNZn6LfGmvQQ2GREh2Rk6boL9Zmip1QQR",
+    "rewardsPda": "EzDLgmpGoknckzuRQpiHtB8DhK9vXVce1NunfxHLiAbN",
+    "treasury": "GiW4YASyysyxzEnWF8mMxAGXc1xVfFty6pLczrw7Zqer",
+    "buyer": "CU3mL94kbNqK9eYDg2RPGTnstd4Fxwkcsd6R3S3umERo",
+    "buyer2": "4DPPasVCxCVzm1DFtYdB5PUJbtaMXCGFhLCme944zZEb",
+    "keeperConfig": "HVnySRbnVqV9qqvUrKoyWpLv2nXTHMQN5KewQkQGNa5s",
+    "keeperPool": "HVHbgF1atWteWUXnfHoU9WMFoVtT2ZsHYQVCpwU6arv9",
+    "dammPool": "AnV7vtayo9jQVbxBZpjici7FzowvbneS9G9aZbjU8A15"
+  },
+  "steps": [
+    {
+      "step": "A. DFS initialize_fee_vault_pda (base = DBC config keypair)",
+      "ok": true,
+      "sig": "3aTdgb5L6iaNTjJhGixeKTkCkRZ9X72T985EiHGKV9qZFzeLh16oXJhDWXVmKDQG2wyWZwytGZJa1GhtUjdGxBCL",
+      "explorer": "https://explorer.solana.com/tx/3aTdgb5L6iaNTjJhGixeKTkCkRZ9X72T985EiHGKV9qZFzeLh16oXJhDWXVmKDQG2wyWZwytGZJa1GhtUjdGxBCL?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "B. DBC createConfigWithTransferHook (tokenAuthorityOption = Immutable, feeClaimer = DFS vault PDA)",
+      "ok": true,
+      "sig": "2Y7udh2B4dPgDKHpcHDPQZr3Gj3wS5LVCaCVVZK2Q86f47rj2rvRAv5qnLFaGuX3zFZo5CJvSrnoKdXXL4v6nreG",
+      "explorer": "https://explorer.solana.com/tx/2Y7udh2B4dPgDKHpcHDPQZr3Gj3wS5LVCaCVVZK2Q86f47rj2rvRAv5qnLFaGuX3zFZo5CJvSrnoKdXXL4v6nreG?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "C. DBC createPoolWithTransferHook + Holdfast initialize_extra_account_meta_list (same tx)",
+      "ok": true,
+      "sig": "3sMdzMBZfG9ZcJtEZYtsdziwVcf4aPKLneyUYAWPtubassnTAMXgLDJRhVtQEdsHLBUp7zLQoG5WU9xwXBvqASRG",
+      "explorer": "https://explorer.solana.com/tx/3sMdzMBZfG9ZcJtEZYtsdziwVcf4aPKLneyUYAWPtubassnTAMXgLDJRhVtQEdsHLBUp7zLQoG5WU9xwXBvqASRG?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "D1. buy with SDK auto-resolved hook accounts (first-time buyer) — expected to FAIL",
+      "ok": true,
+      "note": "simulation err = {\"InstructionError\":[5,{\"Custom\":2724315840}]}",
+      "logs": [
+        "Program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN invoke [1]",
+        "Program log: Instruction: Swap2WithTransferHook",
+        "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+        "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 112 of 942542 compute units",
+        "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+        "Program log: ProgramError occurred. Error Code: Custom(2724315840). Error Number: 2724315840. Error Message: Custom program error: 0xa261c2c0.",
+        "Program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN consumed 40476 of 967065 compute units",
+        "Program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN failed: custom program error: 0xa261c2c0"
+      ]
+    },
+    {
+      "step": "D2. buy via swap2WithTransferHook with Holdfast-resolved hook accounts (first-time buyer)",
+      "ok": true,
+      "sig": "4gTWEWHyQ35eEzzP4yS2jDeKkN7SfWNBZayzfvB8ecES1W3pWqb85YX15Ne2pKWjHGYtvfxqDJeECfBbP5Gg4dMg",
+      "note": "hook accounts: 8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT, GeMtbmEyAzkfDqh4Zfn2EMzTwVWvZeW1PdaSvPAGzeLd, G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu, E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw, 4QeMHqiqkAz5BzKz4BKEaK3uMdajC19q8G1s5dYSiiuq",
+      "explorer": "https://explorer.solana.com/tx/4gTWEWHyQ35eEzzP4yS2jDeKkN7SfWNBZayzfvB8ecES1W3pWqb85YX15Ne2pKWjHGYtvfxqDJeECfBbP5Gg4dMg?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "E. sell 25% via swap2WithTransferHook (resolved hook accounts)",
+      "ok": true,
+      "sig": "4v6XfLvE85GRHWEvQgVsF1iGZk6Td3yKtVQJYf5nEBUWho2ob5pcB2q1ZWEARaKqdNivVxXT4RPJkm5eKD4T5vwr",
+      "explorer": "https://explorer.solana.com/tx/4v6XfLvE85GRHWEvQgVsF1iGZk6Td3yKtVQJYf5nEBUWho2ob5pcB2q1ZWEARaKqdNivVxXT4RPJkm5eKD4T5vwr?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "F. wallet→wallet transferChecked with hook (spl-token resolver)",
+      "ok": true,
+      "sig": "YLbXnjKJjSkeDXZoAj7ymsV9Vy1TQ5K7caLeLzBYLAUteSEvRaTZSVmz25UqNAAQ51zn4ZZUTP6bucbRS2ub6gA",
+      "explorer": "https://explorer.solana.com/tx/YLbXnjKJjSkeDXZoAj7ymsV9Vy1TQ5K7caLeLzBYLAUteSEvRaTZSVmz25UqNAAQ51zn4ZZUTP6bucbRS2ub6gA?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "H. DFS fund_by_claiming_fee → DBC claim_trading_fee2 (fee vault PDA signs as feeClaimer)",
+      "ok": true,
+      "sig": "267XYFq2uGRzi5UFHij5TGaiW6PRSfWP5hFFVztDAV671HCkHzgpR8Xxwxoj8U1WwpURtKntyWJicKvdmfszydNj",
+      "explorer": "https://explorer.solana.com/tx/267XYFq2uGRzi5UFHij5TGaiW6PRSfWP5hFFVztDAV671HCkHzgpR8Xxwxoj8U1WwpURtKntyWJicKvdmfszydNj?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "H2a. keeper fallback: createConfigWithTransferHook (feeClaimer = keeper wallet)",
+      "ok": true,
+      "sig": "5styTdzLdwmqFxbnQCzodhoGK3RydK8f8Y4eHbVd4x2kwWASpDdDWD1JwMTc5ZfR34i73s8PaL2JbsCoLnLoTJzn",
+      "explorer": "https://explorer.solana.com/tx/5styTdzLdwmqFxbnQCzodhoGK3RydK8f8Y4eHbVd4x2kwWASpDdDWD1JwMTc5ZfR34i73s8PaL2JbsCoLnLoTJzn?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "H2b. keeper fallback: pool + meta list",
+      "ok": true,
+      "sig": "3LMhTWAoZbCDXJMSsiLwsEpQvLFPDxyzzoKMWR8fFtEQQYXbWTK3Rwu8h5RuAp2TvdT3ek1fydKWbJKmZCJSdBcV",
+      "explorer": "https://explorer.solana.com/tx/3LMhTWAoZbCDXJMSsiLwsEpQvLFPDxyzzoKMWR8fFtEQQYXbWTK3Rwu8h5RuAp2TvdT3ek1fydKWbJKmZCJSdBcV?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "H2c. keeper fallback: buy",
+      "ok": true,
+      "sig": "4ZkH5evtzq3CKNvMUMP8ehuHxgJR3ncs1hHqeoQNrEr9UDeD4N4HfjLuqUFSa7zJaLH65ghqzJXEe7wiN6XGKVuH",
+      "explorer": "https://explorer.solana.com/tx/4ZkH5evtzq3CKNvMUMP8ehuHxgJR3ncs1hHqeoQNrEr9UDeD4N4HfjLuqUFSa7zJaLH65ghqzJXEe7wiN6XGKVuH?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "H2d. keeper fallback: claimPartnerTradingFee2 by keeper keypair",
+      "ok": true,
+      "sig": "GHspWzNCT3awjMW1S4r9CU5nx9RETuZ9Y77hjjAZXeNEeaiCFryDZtr8upaEAxsoeSxDLG7b2Uppz1in2JUrAvA",
+      "explorer": "https://explorer.solana.com/tx/GHspWzNCT3awjMW1S4r9CU5nx9RETuZ9Y77hjjAZXeNEeaiCFryDZtr8upaEAxsoeSxDLG7b2Uppz1in2JUrAvA?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "I. buy that completes the curve (PartialFill)",
+      "ok": true,
+      "sig": "5czkc2Z9dvfNRVBEzi9jiGxMrxDj7NU6jYmpRn8dvwut3hGQz8WNT6i1yUBKbvYV5dt6grHnBckKmDmG7F9LNfCz",
+      "explorer": "https://explorer.solana.com/tx/5czkc2Z9dvfNRVBEzi9jiGxMrxDj7NU6jYmpRn8dvwut3hGQz8WNT6i1yUBKbvYV5dt6grHnBckKmDmG7F9LNfCz?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "I2. plain transferChecked after completion (no hook accounts)",
+      "ok": true,
+      "sig": "5VYeha2xP1UQJPKHLrf2UiRigTFMNhnMfDNqjKyAsjzR7WphDW5ypb4n8BoXqnodGRUdfammvYKB8mZroWnXHHEU",
+      "explorer": "https://explorer.solana.com/tx/5VYeha2xP1UQJPKHLrf2UiRigTFMNhnMfDNqjKyAsjzR7WphDW5ypb4n8BoXqnodGRUdfammvYKB8mZroWnXHHEU?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "I3. DFS fund_by_claiming_fee → claim_trading_fee2 after completion",
+      "ok": true,
+      "sig": "qL9HwtbVo7TiwmBRereKAMFgntT8mqkfvmAov5KYthZ1q33NU8wbBbB8kz1o3WFGa4fzcdbd3MeBrAam9o2YP2L",
+      "explorer": "https://explorer.solana.com/tx/qL9HwtbVo7TiwmBRereKAMFgntT8mqkfvmAov5KYthZ1q33NU8wbBbB8kz1o3WFGa4fzcdbd3MeBrAam9o2YP2L?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "J. migrateToDammV2 (dammConfig = Customizable)",
+      "ok": true,
+      "sig": "3TWYpFbQ1RJ3xrsBRueEW15EdyAaMoGewJEPVp6vKU6E5dk7t1dFwoL9hX8NchvkP1rGeFBXudTK17po2meAdzrR",
+      "explorer": "https://explorer.solana.com/tx/3TWYpFbQ1RJ3xrsBRueEW15EdyAaMoGewJEPVp6vKU6E5dk7t1dFwoL9hX8NchvkP1rGeFBXudTK17po2meAdzrR?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "K1. DAMM v2 swap SOL→base (generate LP fees)",
+      "ok": true,
+      "sig": "2XK97rQDv2seZipf1cts13LAEiw65Z6Cyj2ZWGPom8GmMsbtcMGiJyUzvG2gRso3zYnBEyMCLRwZgBg87Aa1rs7N",
+      "explorer": "https://explorer.solana.com/tx/2XK97rQDv2seZipf1cts13LAEiw65Z6Cyj2ZWGPom8GmMsbtcMGiJyUzvG2gRso3zYnBEyMCLRwZgBg87Aa1rs7N?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "K2. DAMM v2 swap base→SOL (generate LP fees)",
+      "ok": true,
+      "sig": "27VypAw1XEW8hfXZrpyYx1a1jYQ1QX3CV2ToMS2iZT9S2WuuqReGLuv9y2DKFr5MkCRpTYott5G1asiZXa8xkWAV",
+      "explorer": "https://explorer.solana.com/tx/27VypAw1XEW8hfXZrpyYx1a1jYQ1QX3CV2ToMS2iZT9S2WuuqReGLuv9y2DKFr5MkCRpTYott5G1asiZXa8xkWAV?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "K3. DFS fund_by_claiming_fee → DAMM v2 claim_position_fee (partner LP owned by fee vault PDA)",
+      "ok": true,
+      "sig": "3HXMjafHEabWE6n1Z1gsijvFKSKpHqDPsoHvVy9o565GWGU67dTr1kEnAmtY3p63uAcNgs9HLS7PcpYyJb3aueLJ",
+      "explorer": "https://explorer.solana.com/tx/3HXMjafHEabWE6n1Z1gsijvFKSKpHqDPsoHvVy9o565GWGU67dTr1kEnAmtY3p63uAcNgs9HLS7PcpYyJb3aueLJ?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    },
+    {
+      "step": "L. DFS claim_fee by shareholder (creator)",
+      "ok": true,
+      "sig": "LbAq7xbDuCGquMj3qrQD5VkXoC4uZse8UqCpMStjWg4CNRuXFhfXZQTY9AnpRLKRYSoLoLCBJBdV5du7SDVNZD8",
+      "explorer": "https://explorer.solana.com/tx/LbAq7xbDuCGquMj3qrQD5VkXoC4uZse8UqCpMStjWg4CNRuXFhfXZQTY9AnpRLKRYSoLoLCBJBdV5du7SDVNZD8?cluster=custom&customUrl=http%3A%2F%2F127.0.0.1%3A8899"
+    }
+  ],
+  "findings": {
+    "poolAuthority": {
+      "sdk": "FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM",
+      "derived": "FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM",
+      "match": true
+    },
+    "hookProgramExecutable": true,
+    "program.DBC.executable": true,
+    "program.DFS.executable": true,
+    "program.DAMMv2.executable": true,
+    "dammConfig(Customizable)": {
+      "key": "A8gMrEPJkacWkcb3DGwtJwTe16HktSEfvwtuDh2MCtck",
+      "owner": "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG"
+    },
+    "immutableAuthorityAcceptedForHookConfig": true,
+    "mintAfterCreate": {
+      "transferHookProgramId": "E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw",
+      "transferHookAuthority": "FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM",
+      "mintAuthority": null,
+      "freezeAuthority": null,
+      "supply": "1000000000000000"
+    },
+    "metaListCreatedAfterPoolInSameTx": true,
+    "sdkResolvedHookAccounts(buy)": [
+      "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN",
+      "8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT",
+      "HaPF86GherTwu6nnNUT96GJrLa1yHKMZnTTYEcLop6cK",
+      "HaPF86GherTwu6nnNUT96GJrLa1yHKMZnTTYEcLop6cK",
+      "E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw",
+      "4QeMHqiqkAz5BzKz4BKEaK3uMdajC19q8G1s5dYSiiuq"
+    ],
+    "expectedHookAccounts(buy)": {
+      "launch": "8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT",
+      "srcHolder": "GeMtbmEyAzkfDqh4Zfn2EMzTwVWvZeW1PdaSvPAGzeLd",
+      "dstHolder": "G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu",
+      "holderOfDefaultKey": "HaPF86GherTwu6nnNUT96GJrLa1yHKMZnTTYEcLop6cK"
+    },
+    "sdkAutoResolveWorksForKeySeededExtras": false,
+    "hookLogs(buy)": [
+      "Program log: holdfast hook: BHr5xpj92jqGVz8RrvBaEVW9wtExAwaFGeKwLZPNwJdo -> 2WFK2zTJNUTgiuYRJngJTXkiyJA4svvJVL45FwvD15Wh amount=185123906675332 launch=8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT src_holder=GeMtbmEyAzkfDqh4Zfn2EMzTwVWvZeW1PdaSvPAGzeLd dst_holder=G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu"
+    ],
+    "buyerBaseBalanceAfterBuy": "185123906675332",
+    "hookLogs(sell)": [
+      "Program log: holdfast hook: 2WFK2zTJNUTgiuYRJngJTXkiyJA4svvJVL45FwvD15Wh -> BHr5xpj92jqGVz8RrvBaEVW9wtExAwaFGeKwLZPNwJdo amount=46280976668833 launch=8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT src_holder=G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu dst_holder=GeMtbmEyAzkfDqh4Zfn2EMzTwVWvZeW1PdaSvPAGzeLd"
+    ],
+    "hookLogs(w2w)": [
+      "Program log: holdfast hook: 2WFK2zTJNUTgiuYRJngJTXkiyJA4svvJVL45FwvD15Wh -> AQHxeeipFrDyhzB1rWPP95iRjfmc38fBVCBbWXM4w7Xx amount=1000000 launch=8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT src_holder=G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu dst_holder=BRkuTqW6gHxZ7TkqJUaNj2oJVEufvKtMoYbhMJDkwCkz"
+    ],
+    "finishCurveTimestamp@344(beforeComplete)": "0",
+    "dfsFundedFromDbcPartnerFee(lamports)": "14430339",
+    "dfsClaimTradingFee2Works": true,
+    "keeperClaimPartnerTradingFee2(lamports)": 2691144,
+    "hookLogs(completingBuy)": [
+      "Program log: holdfast hook: BHr5xpj92jqGVz8RrvBaEVW9wtExAwaFGeKwLZPNwJdo -> 2WFK2zTJNUTgiuYRJngJTXkiyJA4svvJVL45FwvD15Wh amount=661156922736072 launch=8UEAUVirmbsKotsqYQZZZ5dLA98x1r9nQ5RjXfFPNXzT src_holder=GeMtbmEyAzkfDqh4Zfn2EMzTwVWvZeW1PdaSvPAGzeLd dst_holder=G5Pq1N4ERj3pXZNmgCAnnfvEApgj2JnuuDxV51jFSHTu"
+    ],
+    "finishCurveTimestamp@344(afterComplete)": {
+      "raw": "1791559220",
+      "sdkDecoded": "1791559220",
+      "match": true
+    },
+    "hookAfterCompletion": {
+      "programId": "11111111111111111111111111111111",
+      "authority": "11111111111111111111111111111111"
+    },
+    "dfsFundedFromDbcPartnerFee#2(lamports)": "104403515",
+    "dammPool": {
+      "address": "AnV7vtayo9jQVbxBZpjici7FzowvbneS9G9aZbjU8A15",
+      "collectFeeMode": 2,
+      "tokenA": "BtWgggA3mfzjj46PEuJf1YjjMxkrJVPmKSfq3vTw5L6G",
+      "tokenB": "So11111111111111111111111111111111111111112"
+    },
+    "positionsOwnedByFeeVault": [
+      {
+        "position": "CH784BEDEmeHWY9cSunWWyZH9TegztQRG6QLio1UiJDw",
+        "nftAccount": "DByJEAsvQgwqGMJMurMCuMGoDcK4xqXgM3yE58T51FeL",
+        "permanentLocked": "2910852939276898297190547428249",
+        "unlocked": "0"
+      }
+    ],
+    "positionsOwnedByCreator": [
+      {
+        "position": "CP9tqNpdWrHX3FvHeUhrMnGhL5ogXcGJgowRvuJoXWcH",
+        "vested": "2910852960765714478546194202953",
+        "unlocked": "0"
+      }
+    ],
+    "dfsFundedFromDammV2PositionFee(lamports)": "1011902",
+    "walletSolSpent": 0.048368576
+  }
+}

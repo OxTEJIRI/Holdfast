@@ -50,3 +50,20 @@ pub struct LaunchFinalized {
     pub final_total_points: u128,
     pub total_tracked: u64,
 }
+
+#[event]
+pub struct RewardsAdded {
+    pub launch: Pubkey,
+    pub amount: u64,
+    pub acc_reward_per_point: u128,
+    pub total_rewards_in: u64,
+}
+
+#[event]
+pub struct RewardsClaimed {
+    pub launch: Pubkey,
+    pub holder: Pubkey,
+    pub owner: Pubkey,
+    pub amount: u64,
+    pub final_points: u128,
+}

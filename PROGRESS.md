@@ -30,15 +30,25 @@
   - 18 integration tests covering §5.6 tests 1–8, plus `init_launch` guards. The fuzz seed can be overridden with `FUZZ_SEED`.
 - The pool + `init_launch` + creator ATA + `register` tx is 1,155 of 1,232 bytes. A creator first buy must therefore be a separate tx (§6.1 Tx D), or the creation tx needs an ALT.
 
+## Phase 2: Graduation + rewards ✅ done
+
+- Program: `sync_rewards(index)` (DFS mode: CPIs DFS `claim_fee` signed by the rewards PDA, then distributes), `deposit_rewards(amount)` (keeper mode), `claim()`; Q64.64 accumulator over final points (`math::mul_shr64` with a 256-bit intermediate). Anything that lands in the rewards vault is distributed by the next sync/deposit; before finalize it waits. Payouts round down and are capped at the vault balance, so the vault never overpays.
+- Fee mode is enforced on the `launch` account constraint: `sync_rewards` in keeper mode / `deposit_rewards` in DFS mode fail with `WrongFeeMode`.
+- §6.1 launch sequence implemented in `tests/helpers.ts` `createLaunch` (Tx A DFS vault → Tx B DBC config with fee claimer = vault → Tx C pool + `init_launch` + creator register). Moves into `@holdfast/sdk` in Phase 3.
+- Tests: 15 Rust unit tests; 27 integration tests (adds §5.6 tests 9–11 in DFS mode on mainnet binaries, plus a keeper-mode suite, double-claim, non-owner claim and fee-mode guards). Claims are checked exactly against `floor(final_points × acc / 2^64)` and against cumulative pro rata (never above, short by < 1 lamport per sync round).
+- Release profile now `opt-level = "z"`: program 270 KB (was 328 KB), hook 12.6k CU per transfer (budget 30k). Saves ~0.4 SOL of rent per deploy.
+- Devnet: program upgraded in place (extended to 269,992 bytes). `scripts/e2e.ts` ran the full story on devnet in keeper mode — protection rules, graduation, migration to a Compounding DAMM v2 pool, two rounds of non-zero holder claims (bonding fees, then post-graduation LP fees). Tx list: `docs/e2e/devnet.md`.
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`tests/helpers.ts` `patchHookAccounts` → move into the SDK in Phase 3). No on-chain change.
 - **V6:** devnet DFS doesn't whitelist DBC `claim_trading_fee2`. Devnet uses the keeper fallback (`deposit_rewards`); mainnet uses DFS. The program supports both modes (`Launch.fee_vault == default` means keeper mode).
 - Integration tests (§5.6) use mainnet binaries and must clone the DBC pool-authority PDA (it funds migration rent).
-- The devnet deployment is still the Phase 0 no-op hook (134 KB). The current program is 271 KB, so the devnet upgrade needs `solana program extend` (~1 SOL extra rent). Do this in Phase 2 before the devnet end-to-end run.
+- **Devnet SOL is nearly gone (≈0.19 SOL left).** The Arena (Phase 4) needs ~10–12 devnet SOL.
+- DFS `fund_by_claiming_fee` needs a shareholder signer, so in DFS mode the crank is run by the creator or treasury (or the keeper). A Holdfast proxy instruction signed by the rewards PDA would make it fully permissionless; not built (not in spec).
 - `packages/spike` targets the Phase 0 program (its standalone `initialize_extra_account_meta_list` no longer exists). It is kept as the Phase 0 record.
 - §13 limitations to state in the README: bonding-phase trades must go through `@holdfast/sdk` (V4); only registered ATAs earn points.
 
-## Next: Phase 2 (graduation + rewards)
+## Next: Phase 3 (SDK)
 
-`sync_rewards` (DFS CPI), `claim`, `deposit_rewards` (keeper mode), the §6.1 launch tx sequence, and §5.6 tests 9–11.
+`@holdfast/sdk` per §6: presets, `buildHoldfastConfig`, `createLaunch`, `buy`/`sell` (with the V4 hook-account patch), getters, `projectedShare`, `finalize`/`crank`/`claim`, `explainError`, typed PDAs. Move the harness logic in `tests/helpers.ts` into it.

@@ -24,6 +24,33 @@ pub fn bps_of(supply: u64, bps: u16) -> u64 {
     ((supply as u128) * (bps as u128) / 10_000) as u64
 }
 
+/// `floor(a × b / 2^64)` with a 256-bit intermediate; `None` if the result exceeds u128.
+pub fn mul_shr64(a: u128, b: u128) -> Option<u128> {
+    const LO: u128 = u64::MAX as u128;
+    let (a_hi, a_lo) = (a >> 64, a & LO);
+    let (b_hi, b_lo) = (b >> 64, b & LO);
+    let ll = a_lo * b_lo;
+    let lh = a_lo * b_hi;
+    let hl = a_hi * b_lo;
+    let hh = a_hi * b_hi;
+    // bits 64..128 of the product, plus carry into bit 128
+    let mid = (ll >> 64) + (lh & LO) + (hl & LO);
+    // bits 128..256
+    let hi = hh.checked_add(lh >> 64)?.checked_add(hl >> 64)?.checked_add(mid >> 64)?;
+    if hi > LO {
+        return None;
+    }
+    Some((hi << 64) | (mid & LO))
+}
+
+/// Reward-per-point increment for `amount` spread over `total_points` (Q64.64, rounded down).
+pub fn reward_per_point(amount: u64, total_points: u128) -> u128 {
+    if total_points == 0 {
+        return 0;
+    }
+    ((amount as u128) << 64) / total_points
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -97,6 +124,62 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn mul_shr64_matches_oracle() {
+        let xs = [0u128, 1, 3, u64::MAX as u128, 1u128 << 64, (1u128 << 64) + 12_345, u128::MAX >> 1, u128::MAX];
+        for &a in &xs {
+            for &b in &xs {
+                let want = mul_shr_naive(a, b);
+                assert_eq!(mul_shr64(a, b), want, "a={a} b={b}");
+            }
+        }
+    }
+
+    /// Bit-serial (a × b) >> 64 with an explicit 256-bit accumulator.
+    fn mul_shr_naive(a: u128, b: u128) -> Option<u128> {
+        let mut acc = [0u128; 2]; // low, high 128-bit halves
+        for i in 0..128 {
+            if (b >> i) & 1 == 1 {
+                // add a << i
+                let lo = if i == 0 { a } else { a << i };
+                let hi = if i == 0 { 0 } else { a >> (128 - i) };
+                let (l, c) = acc[0].overflowing_add(lo);
+                acc[0] = l;
+                acc[1] = acc[1].wrapping_add(hi).wrapping_add(c as u128);
+            }
+        }
+        if acc[1] >> 64 != 0 {
+            return None;
+        }
+        Some((acc[1] << 64) | (acc[0] >> 64))
+    }
+
+    #[test]
+    fn rewards_round_down_and_never_overpay() {
+        // three holders with final points 1, 2, 4 share 1_000 lamports
+        let pts = [1u128, 2, 4];
+        let total: u128 = pts.iter().sum();
+        let acc = reward_per_point(1_000, total);
+        let paid: Vec<u128> = pts.iter().map(|&p| mul_shr64(p, acc).unwrap()).collect();
+        assert_eq!(paid, vec![142, 285, 571]);
+        assert!(paid.iter().sum::<u128>() <= 1_000);
+        for (p, got) in pts.iter().zip(&paid) {
+            let exact = 1_000u128 * p / total;
+            assert!(exact - got <= 1, "within 1 lamport of pro rata");
+        }
+        assert_eq!(reward_per_point(5, 0), 0);
+    }
+
+    #[test]
+    fn rewards_at_realistic_extremes() {
+        // 1e18 base units held for 100 years, u64::MAX lamports of rewards
+        let total = 1_000_000_000_000_000_000u128 * 3_153_600_000;
+        let acc = reward_per_point(u64::MAX, total);
+        let all = mul_shr64(total, acc).unwrap();
+        assert!(all <= u64::MAX as u128);
+        assert!(u64::MAX as u128 - all <= (total >> 64) + 2, "loss bounded by rounding");
     }
 
     /// DESIGN.md §5.6 test 12: max supply × max duration.

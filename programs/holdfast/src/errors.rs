@@ -31,4 +31,6 @@ pub enum HoldfastError {
     MintAuthorityNotRevoked,
     #[msg("The bonding phase is over; registration is closed")]
     TradingClosed,
+    #[msg("Instruction not available in this launch's fee mode (DFS vs keeper)")]
+    WrongFeeMode,
 }

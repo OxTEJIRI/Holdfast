@@ -10,3 +10,4 @@ fixtures/*.so
 .next/
 test-ledger/
 packages/spike/.keys/
+scripts/.e2e-keys/

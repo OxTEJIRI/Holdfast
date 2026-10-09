@@ -39,9 +39,30 @@
 - Release profile now `opt-level = "z"`: program 270 KB (was 328 KB), hook 12.6k CU per transfer (budget 30k). Saves ~0.4 SOL of rent per deploy.
 - Devnet: program upgraded in place (extended to 269,992 bytes). `scripts/e2e.ts` ran the full story on devnet in keeper mode — protection rules, graduation, migration to a Compounding DAMM v2 pool, two rounds of non-zero holder claims (bonding fees, then post-graduation LP fees). Tx list: `docs/e2e/devnet.md`.
 
+## Phase 3: SDK ✅ done
+
+- `packages/sdk` (`@holdfast/sdk`), per §6:
+  - `presets` (Fair Launch / Slow Burn / Arena) with `resolvePreset`, `validateRules` and `validateSplit`;
+  - `buildHoldfastConfig` (DBC `buildCurve`, or `buildCurveWithLiquidityWeights` rescaled to the preset threshold for Slow Burn);
+  - `createLaunch` (the §6.1 sequence in DFS or keeper mode, plus `buildFirstBuy`);
+  - `buy` (quoted slippage, auto-register, ExactOut / PartialFill), `sell`, `transferTokens`, `patchHookAccounts`;
+  - `getLaunch`, `getHolder`, `getHolderForOwner`, `getLeaderboard`, `pointsAt`, `projectedShare`, `forfeitPreview`, `claimable`;
+  - `finalize`, `crank` (both fee modes, including finalize), `claim` (unwraps to SOL);
+  - `explainError` (`"Snipe-locked until 14:32:05"`) and typed PDAs;
+  - Node helpers `sendTx` / `sendSteps`.
+
+  The IDL is synced from `target/` by `scripts/sync-idl.sh` (run by `scripts/test.sh`).
+- **Deviation:** `createLaunch` returns `steps[].build()` builders instead of prebuilt `txs`. The DBC SDK reads the config account from chain when building the pool tx, so each step must be built after the previous one confirms. The UI flow is unchanged: one signature per step, with progress.
+- Slow Burn sets a 10k-token `leftover` (0.001% of supply, withdrawable by the treasury). The DBC liquidity-weights builder needs it as a rounding allowance.
+- `scripts/create-launch.ts` uses only the SDK. It refuses mainnet without `--mainnet`.
+- Tests (`pnpm test`):
+  - 15 Rust unit tests and 13 offline SDK tests. Every preset × network passes the DBC SDK's own `validateConfigParameters` with transfer hook.
+  - 39 integration tests. The 27 program tests now run through the SDK. The 12 SDK tests cover every preset launching on the real DBC program within the size limit, plus buy → snipe-lock → leaderboard → crank → claim in both fee modes.
+- Launch tx sizes: config 717–1,206 bytes (Slow Burn in DFS mode is the largest); pool + launch 1,111–1,155 bytes. Both are under the 1,232-byte limit.
+
 ## Decisions / open issues
 
-- **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`tests/helpers.ts` `patchHookAccounts` → move into the SDK in Phase 3). No on-chain change.
+- **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.
 - **V6:** devnet DFS doesn't whitelist DBC `claim_trading_fee2`. Devnet uses the keeper fallback (`deposit_rewards`); mainnet uses DFS. The program supports both modes (`Launch.fee_vault == default` means keeper mode).
 - Integration tests (§5.6) use mainnet binaries and must clone the DBC pool-authority PDA (it funds migration rent).
 - **Devnet SOL is nearly gone (≈0.19 SOL left).** The Arena (Phase 4) needs ~10–12 devnet SOL.
@@ -49,6 +70,6 @@
 - `packages/spike` targets the Phase 0 program (its standalone `initialize_extra_account_meta_list` no longer exists). It is kept as the Phase 0 record.
 - §13 limitations to state in the README: bonding-phase trades must go through `@holdfast/sdk` (V4); only registered ATAs earn points.
 
-## Next: Phase 3 (SDK)
+## Next: Phase 4 (Arena simulation)
 
-`@holdfast/sdk` per §6: presets, `buildHoldfastConfig`, `createLaunch`, `buy`/`sell` (with the V4 hook-account patch), getters, `projectedShare`, `finalize`/`crank`/`claim`, `explainError`, typed PDAs. Move the harness logic in `tests/helpers.ts` into it.
+`sim/fund.ts` and `sim/run.ts` per §8, using only `@holdfast/sdk`; `events.jsonl` and `summary.json`; the ≥5× result. Needs ~10–12 devnet SOL (≈0.19 left).

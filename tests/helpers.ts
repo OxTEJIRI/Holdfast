@@ -3,8 +3,8 @@
  * Meteora programs (scripts/local-validator.sh, mainnet binaries) — see scripts/test.sh.
  */
 import * as anchor from '@coral-xyz/anchor'
+import * as sdk from '@holdfast/sdk'
 import {
-  AccountMeta,
   ComputeBudgetProgram,
   Connection,
   Keypair,
@@ -18,37 +18,12 @@ import {
   sendAndConfirmTransaction,
 } from '@solana/web3.js'
 import {
-  NATIVE_MINT,
   TOKEN_2022_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  createAssociatedTokenAccountIdempotentInstruction,
-  createSyncNativeInstruction,
   createTransferCheckedWithTransferHookInstruction,
   getAccount,
-  getAssociatedTokenAddressSync,
 } from '@solana/spl-token'
-import {
-  ActivationType,
-  BaseFeeMode,
-  CollectFeeMode,
-  DammV2DynamicFeeMode,
-  DynamicBondingCurveClient,
-  MigratedCollectFeeMode,
-  MigrationFeeOption,
-  MigrationOption,
-  SwapMode,
-  TokenAuthorityOption,
-  TokenDecimal,
-  TokenType,
-  buildCurve,
-  deriveDbcPoolAddress,
-  deriveDbcPoolAuthority,
-} from '@meteora-ag/dynamic-bonding-curve-sdk'
-import {
-  DynamicFeeSharingClient,
-  deriveFeeVaultPdaAddress,
-  deriveTokenVaultAddress,
-} from '@meteora-ag/dynamic-fee-sharing-sdk'
+import { DynamicBondingCurveClient } from '@meteora-ag/dynamic-bonding-curve-sdk'
+import { DynamicFeeSharingClient } from '@meteora-ag/dynamic-fee-sharing-sdk'
 import BN from 'bn.js'
 import { readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
@@ -64,33 +39,26 @@ const provider = new anchor.AnchorProvider(conn, new anchor.Wallet(wallet), { co
 const idl = JSON.parse(readFileSync(join(__dirname, '../target/idl/holdfast.json'), 'utf8'))
 export const program = new anchor.Program<Holdfast>(idl, provider)
 export const HOLDFAST = program.programId
-export const DBC = new PublicKey('dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN')
-export const POOL_AUTHORITY = deriveDbcPoolAuthority()
+if (!HOLDFAST.equals(sdk.HOLDFAST_PROGRAM_ID)) throw new Error('target/idl and @holdfast/sdk disagree on the program id')
 export const dbc = new DynamicBondingCurveClient(conn, 'confirmed')
 export const dfs = new DynamicFeeSharingClient(conn, 'confirmed')
-export const DFS = new PublicKey('dfsdo2UqvwfN8DuUVrMRNfQe11VaiNoKcMqLHVvDPzh')
-/** DFS split (holders / creator / treasury), DESIGN.md §4.2 Fair Launch */
-export const DFS_SHARES = { holders: 60, creator: 30, treasury: 10 }
-export const DECIMALS = 6
-export const SUPPLY = 1_000_000_000n * 10n ** 6n
+/** Arena / Fair Launch split (holders / creator / treasury), DESIGN.md §4.2 */
+export const DFS_SHARES = sdk.presets.arena.split
+export const DECIMALS = sdk.TOKEN_DECIMALS
+export const SUPPLY = sdk.TOTAL_SUPPLY
 
 // ---------------------------------------------------------------------------------------------
-// PDAs
-const pda = (seeds: Buffer[]) => PublicKey.findProgramAddressSync(seeds, HOLDFAST)[0]
-export const launchPda = (mint: PublicKey) => pda([Buffer.from('launch'), mint.toBuffer()])
-export const holderPda = (tokenAccount: PublicKey) => pda([Buffer.from('holder'), tokenAccount.toBuffer()])
-export const rewardsAuthorityPda = (mint: PublicKey) => pda([Buffer.from('rewards'), mint.toBuffer()])
-export const rewardsVaultPda = (mint: PublicKey) => pda([Buffer.from('rewards_vault'), mint.toBuffer()])
-export const wsolAta = (owner: PublicKey) => getAssociatedTokenAddressSync(NATIVE_MINT, owner, true, TOKEN_PROGRAM_ID)
-export const ata = (mint: PublicKey, owner: PublicKey) => getAssociatedTokenAddressSync(mint, owner, true, TOKEN_2022_PROGRAM_ID)
+// PDAs (from the SDK)
+export const { launchPda, holderPda, rewardsAuthorityPda, rewardsVaultPda, wsolAta } = sdk
+export const ata = sdk.holderTokenAccount
 
 // ---------------------------------------------------------------------------------------------
 // Tx plumbing
 export type TxResult = { sig: string; logs: string[] }
 
-export async function send(ixs: TransactionInstruction[] | Transaction, signers: Keypair[]): Promise<TxResult> {
+export async function send(ixs: TransactionInstruction[] | Transaction, signers: Keypair[], opts: { computeBudget?: boolean } = {}): Promise<TxResult> {
   const tx = ixs instanceof Transaction ? ixs : new Transaction().add(...ixs)
-  if (!tx.instructions.some((i) => i.programId.equals(ComputeBudgetProgram.programId))) {
+  if (opts.computeBudget !== false && !tx.instructions.some((i) => i.programId.equals(ComputeBudgetProgram.programId))) {
     tx.instructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }))
   }
   const sig = await sendAndConfirmTransaction(conn, tx, signers, { commitment: 'confirmed' })
@@ -186,7 +154,7 @@ export const fetchLaunch = (mint: PublicKey) => program.account.launch.fetch(lau
 export const fetchHolder = (mint: PublicKey, owner: PublicKey) => program.account.holder.fetchNullable(holderPda(ata(mint, owner)))
 
 // ---------------------------------------------------------------------------------------------
-// Launch creation
+// Launch creation — through @holdfast/sdk (Arena preset with test overrides)
 export type LaunchOpts = {
   windowSecs: number
   snipeLockSecs: number
@@ -195,7 +163,6 @@ export type LaunchOpts = {
   thresholdSol?: number
   /** 'dfs' (DESIGN.md §6.1: DFS vault is the DBC fee claimer) or 'keeper' (fallback; test wallet is the fee claimer). Default keeper. */
   mode?: 'dfs' | 'keeper'
-  feeVault?: PublicKey
 }
 
 export type TestLaunch = {
@@ -212,158 +179,80 @@ export type TestLaunch = {
   opts: LaunchOpts
 }
 
-export function curveConfig(thresholdSol: number) {
-  return buildCurve({
-    token: {
-      tokenType: TokenType.Token2022, tokenBaseDecimal: TokenDecimal.SIX, tokenQuoteDecimal: TokenDecimal.NINE,
-      tokenAuthorityOption: TokenAuthorityOption.Immutable, totalTokenSupply: 1_000_000_000, leftover: 0,
-    },
-    fee: {
-      baseFeeParams: {
-        baseFeeMode: BaseFeeMode.FeeSchedulerLinear,
-        feeSchedulerParam: { startingFeeBps: 100, endingFeeBps: 100, numberOfPeriod: 0, totalDuration: 0 },
-      },
-      dynamicFeeEnabled: false, collectFeeMode: CollectFeeMode.QuoteToken, creatorTradingFeePercentage: 0,
-      poolCreationFee: 0, enableFirstSwapWithMinFee: false,
-    },
-    migration: {
-      migrationOption: MigrationOption.MET_DAMM_V2, migrationFeeOption: MigrationFeeOption.Customizable,
-      migrationFee: { feePercentage: 0, creatorFeePercentage: 0 },
-      migratedPoolFee: {
-        collectFeeMode: MigratedCollectFeeMode.Compounding, dynamicFee: DammV2DynamicFeeMode.Enabled,
-        poolFeeBps: 100, compoundingFeeBps: 5000,
-      },
-    },
-    liquidityDistribution: {
-      partnerLiquidityPercentage: 0, partnerPermanentLockedLiquidityPercentage: 50,
-      creatorLiquidityPercentage: 0, creatorPermanentLockedLiquidityPercentage: 0,
-      creatorLiquidityVestingInfoParams: {
-        vestingPercentage: 50, bpsPerPeriod: 111, numberOfPeriods: 90,
-        cliffDurationFromMigrationTime: 7 * 86400, totalDuration: 90 * 86400,
-      },
-    },
-    lockedVesting: { totalLockedVestingAmount: 0, numberOfVestingPeriod: 0, cliffUnlockAmount: 0, totalVestingDuration: 0, cliffDurationFromMigrationTime: 0 },
-    activationType: ActivationType.Timestamp,
-    percentageSupplyOnMigration: 20,
-    migrationQuoteThreshold: thresholdSol,
-  })
-}
-
 export function registerIxs(mint: PublicKey, owner: PublicKey, payer = owner): Promise<TransactionInstruction>[] {
-  const tokenAccount = ata(mint, owner)
-  return [
-    Promise.resolve(createAssociatedTokenAccountIdempotentInstruction(payer, tokenAccount, owner, mint, TOKEN_2022_PROGRAM_ID)),
-    program.methods.register().accountsPartial({
-      payer, owner, launch: launchPda(mint), mint, tokenAccount, holder: holderPda(tokenAccount),
-      token2022Program: TOKEN_2022_PROGRAM_ID,
-    }).instruction(),
-  ]
+  const both = sdk.registerIxs(conn, mint, owner, payer)
+  return [both.then((x) => x[0]), both.then((x) => x[1])]
 }
 
-export async function initLaunchIx(args: {
-  mint: PublicKey; pool: PublicKey; config: PublicKey; creator: PublicKey; payer: PublicKey; opts: LaunchOpts
-}) {
-  return program.methods
-    .initLaunch({
-      windowSecs: args.opts.windowSecs,
-      snipeLockSecs: args.opts.snipeLockSecs,
-      maxWalletBps: args.opts.maxWalletBps,
-      feeVault: args.opts.feeVault ?? PublicKey.default,
-    })
-    .accountsPartial({
-      payer: args.payer, creator: args.creator, mint: args.mint, dbcPool: args.pool, dbcConfig: args.config,
-      quoteMint: NATIVE_MINT, quoteTokenProgram: TOKEN_PROGRAM_ID, token2022Program: TOKEN_2022_PROGRAM_ID,
-    })
-    .instruction()
-}
+const rulesOf = (o: LaunchOpts) => ({ windowSecs: o.windowSecs, snipeLockSecs: o.snipeLockSecs, maxWalletBps: o.maxWalletBps })
 
-/** DBC hook config (feeClaimer = test wallet, i.e. keeper mode) + one tx: pool, init_launch, creator register. */
+/**
+ * The §6.1 sequence via `sdk.createLaunch`. `override` is test-only: it swaps in a raw `init_launch`
+ * (an impostor creator, or rules the SDK would refuse client-side) so the program's own guards run.
+ */
 export async function createLaunch(opts: LaunchOpts, override?: { initLaunchCreator?: Keypair }): Promise<TestLaunch & { createTxBytes: number }> {
   const creator = await newActor(IS_LOCALNET ? 2 : 0.03)
-  const configKp = Keypair.generate()
-  const mintKp = Keypair.generate()
-  const mint = mintKp.publicKey
-  const pool = deriveDbcPoolAddress(NATIVE_MINT, mint, configKp.publicKey)
   const treasury = Keypair.generate().publicKey
-  const dfsMode = opts.mode === 'dfs'
-  const feeVault = dfsMode ? deriveFeeVaultPdaAddress(configKp.publicKey, NATIVE_MINT) : PublicKey.default
-
-  // §6.1 Tx A: DFS fee vault PDA (base = config keypair), shareholders [rewards PDA, creator, treasury]
-  if (dfsMode) {
-    await send(await dfs.createFeeVaultPda({
-      base: configKp.publicKey, tokenMint: NATIVE_MINT, tokenProgram: TOKEN_PROGRAM_ID,
-      owner: creator.publicKey, payer: wallet.publicKey,
-      userShare: [
-        { address: rewardsAuthorityPda(mint), share: DFS_SHARES.holders },
-        { address: creator.publicKey, share: DFS_SHARES.creator },
-        { address: treasury, share: DFS_SHARES.treasury },
-      ],
-    }), [wallet, configKp])
+  let rulesValid = true
+  try {
+    sdk.validateRules(rulesOf(opts))
+  } catch {
+    rulesValid = false
   }
-
-  // §6.1 Tx B: DBC transfer-hook config; fee claimer = DFS vault (or the keeper wallet)
-  await send(await dbc.partner.createConfigWithTransferHook({
-    config: configKp.publicKey, feeClaimer: dfsMode ? feeVault : wallet.publicKey, leftoverReceiver: treasury, payer: wallet.publicKey,
-    quoteMint: NATIVE_MINT, transferHookProgram: HOLDFAST, ...curveConfig(opts.thresholdSol ?? 5),
-  }), [wallet, configKp])
-
-  const poolTx = await dbc.creator.createPoolWithTransferHook({
-    baseMint: mint, config: configKp.publicKey, name: 'Holdfast Test', symbol: 'HFT', uri: 'https://holdfast.example/t.json',
-    payer: wallet.publicKey, poolCreator: creator.publicKey, transferHookProgram: HOLDFAST,
+  const prepared = await sdk.createLaunch(conn, {
+    creator: creator.publicKey, payer: wallet.publicKey, name: 'Holdfast Test', symbol: 'HFT', uri: 'https://holdfast.example/t.json',
+    preset: 'arena', network: 'localnet', treasury, feeMode: opts.mode ?? 'keeper', keeper: wallet.publicKey,
+    overrides: {
+      rules: rulesValid ? rulesOf(opts) : { windowSecs: 0, snipeLockSecs: 0, maxWalletBps: 0 },
+      thresholdSol: opts.thresholdSol ?? 5,
+      fee: { startBps: 100, endBps: 100 }, // flat 1%: keeps token amounts predictable in tests
+    },
   })
-  const initCreator = override?.initLaunchCreator ?? creator
-  // §6.1 Tx C: pool + init_launch + creator register, atomically
-  poolTx.add(await initLaunchIx({ mint, pool, config: configKp.publicKey, creator: initCreator.publicKey, payer: wallet.publicKey, opts: { ...opts, feeVault } }))
-  // creator registers in the same tx (skipped for the impostor variant to stay under the size limit)
-  if (initCreator === creator) poolTx.add(...(await Promise.all(registerIxs(mint, creator.publicKey, wallet.publicKey))))
-  const signers = [wallet, mintKp, creator, ...(initCreator === creator ? [] : [initCreator])]
-  const { sig } = await send(poolTx, signers)
-  const createTxBytes = poolTx.serialize().length
-  const baseVault = (await dbc.state.getPool(pool))!.poolState.baseVault
-  return { mint, config: configKp.publicKey, pool, baseVault, launch: launchPda(mint), creator, treasury, feeVault, createSig: sig, opts, createTxBytes }
+  const extra: Keypair[] = []
+  let createSig = ''
+  let createTxBytes = 0
+  for (const [i, step] of prepared.steps.entries()) {
+    const tx = await step.build()
+    if (i === prepared.steps.length - 1 && (override?.initLaunchCreator || !rulesValid)) {
+      const ixs = tx.instructions
+      const at = ixs.findIndex((x) => x.programId.equals(HOLDFAST))
+      const initCreator = override?.initLaunchCreator ?? creator
+      ixs[at] = await sdk.initLaunchIx(conn, {
+        mint: prepared.mint, pool: prepared.pool, config: prepared.config, creator: initCreator.publicKey, payer: wallet.publicKey,
+        rules: rulesOf(opts), feeVault: prepared.feeVault,
+      })
+      // drop the creator's ATA + register (keeps the impostor variant under the size limit)
+      if (initCreator !== creator) {
+        ixs.splice(at + 1)
+        extra.push(initCreator)
+      }
+    }
+    createSig = (await send(tx, sdk.requiredSigners(tx, [wallet, creator, ...extra, ...step.signers]))).sig
+    createTxBytes = tx.serialize().length
+  }
+  const baseVault = (await dbc.state.getPool(prepared.pool))!.poolState.baseVault
+  return {
+    mint: prepared.mint, config: prepared.config, pool: prepared.pool, baseVault, launch: prepared.launch, creator, treasury,
+    feeVault: prepared.feeVault, createSig, opts, createTxBytes,
+  }
 }
 
 // ---------------------------------------------------------------------------------------------
-// Trading
-
-/**
- * The DBC SDK resolves hook extras with source = destination = PublicKey.default, which is wrong
- * for Holdfast's key-seeded holder PDAs (docs/VERIFICATION.md V4). Re-resolve for the real
- * accounts and splice over the SDK's hook slice.
- */
-export async function patchHookAccounts(tx: Transaction, mint: PublicKey, source: PublicKey, destination: PublicKey, authority: PublicKey) {
-  const ix = tx.instructions.find((i) => i.programId.equals(DBC))!
-  const resolved = await createTransferCheckedWithTransferHookInstruction(
-    conn, source, mint, destination, authority, 0n, DECIMALS, [], 'confirmed', TOKEN_2022_PROGRAM_ID,
-  )
-  const hookAccounts: AccountMeta[] = resolved.keys.slice(4)
-  ix.keys.splice(ix.keys.length - hookAccounts.length, hookAccounts.length, ...hookAccounts)
-}
+// Trading — through @holdfast/sdk
 
 /**
  * Buy with `sol` SOL (ExactIn / PartialFill), or — with `tokensOut` — exactly that many base units
- * (ExactOut, spending at most `sol`).
+ * (ExactOut, spending at most `sol`). Registers only when `register` is set (the SDK default is to auto-register).
  */
 export async function buy(l: TestLaunch, owner: Keypair, sol: number, o: { register?: boolean; partialFill?: boolean; tokensOut?: bigint } = {}) {
-  const lamports = new BN(Math.round(sol * LAMPORTS_PER_SOL))
-  const base = { owner: owner.publicKey, pool: l.pool, swapBaseForQuote: false, referralTokenAccount: null }
-  const tx = await dbc.pool.swap2WithTransferHook(
-    o.tokensOut !== undefined
-      ? { ...base, swapMode: SwapMode.ExactOut, amountOut: new BN(o.tokensOut.toString()), maximumAmountIn: lamports }
-      : { ...base, swapMode: o.partialFill ? SwapMode.PartialFill : SwapMode.ExactIn, amountIn: lamports, minimumAmountOut: new BN(0) },
-  )
-  await patchHookAccounts(tx, l.mint, l.baseVault, ata(l.mint, owner.publicKey), POOL_AUTHORITY)
-  if (o.register) tx.instructions.unshift(...(await Promise.all(registerIxs(l.mint, owner.publicKey))))
+  const tx = await sdk.buy(conn, {
+    owner: owner.publicKey, mint: l.mint, solIn: sol, tokensOut: o.tokensOut, partialFill: o.partialFill, autoRegister: !!o.register,
+  })
   return send(tx, [owner])
 }
 
 export async function sell(l: TestLaunch, owner: Keypair, amount: bigint) {
-  const tx = await dbc.pool.swap2WithTransferHook({
-    owner: owner.publicKey, pool: l.pool, swapBaseForQuote: true, referralTokenAccount: null,
-    swapMode: SwapMode.ExactIn, amountIn: new BN(amount.toString()), minimumAmountOut: new BN(0),
-  })
-  await patchHookAccounts(tx, l.mint, ata(l.mint, owner.publicKey), l.baseVault, owner.publicKey)
-  return send(tx, [owner])
+  return send(await sdk.sell(conn, { owner: owner.publicKey, mint: l.mint, tokensIn: amount }), [owner])
 }
 
 export async function transferIx(mint: PublicKey, from: PublicKey, to: PublicKey, amount: bigint) {
@@ -374,53 +263,25 @@ export async function transferIx(mint: PublicKey, from: PublicKey, to: PublicKey
 
 /** Wallet-to-wallet transfer (creates the destination ATA if needed). */
 export async function transfer(mint: PublicKey, from: Keypair, to: PublicKey, amount: bigint) {
-  return send([
-    createAssociatedTokenAccountIdempotentInstruction(from.publicKey, ata(mint, to), to, mint, TOKEN_2022_PROGRAM_ID),
-    await transferIx(mint, from.publicKey, to, amount),
-  ], [from])
+  return send(await sdk.transferTokens(conn, { from: from.publicKey, to, mint, amount }), [from])
 }
 
 export const bn = (x: BN | number | bigint) => BigInt(x.toString())
 
 // ---------------------------------------------------------------------------------------------
-// Graduation + rewards
+// Graduation + rewards — through @holdfast/sdk
 
-export const finalizeIx = (l: TestLaunch) =>
-  program.methods.finalize().accountsPartial({ launch: l.launch, mint: l.mint, dbcPool: l.pool }).instruction()
+export const finalizeIx = (l: TestLaunch) => sdk.finalizeIx(conn, l.mint, l.pool)
 
 /** DFS mode crank: DFS claim_fee(0) signed by the rewards PDA, then distribute. */
-export const syncRewardsIx = (l: TestLaunch) =>
-  program.methods.syncRewards(0).accountsPartial({
-    launch: l.launch, rewardsAuthority: rewardsAuthorityPda(l.mint), rewardsVault: rewardsVaultPda(l.mint), quoteMint: NATIVE_MINT,
-    dfsFeeVault: l.feeVault, dfsTokenVault: deriveTokenVaultAddress(l.feeVault),
-    dfsFeeVaultAuthority: new PublicKey('EYqHRdtepv1KKUkPAYMBYpSfiGfNd8sa55ZtswodTfBS'),
-    dfsEventAuthority: new PublicKey('EjRrm5Ptzzbp4fft5k4oC9LvbXqVA4UV4Sc9RNULDhCA'), dfsProgram: DFS, tokenProgram: TOKEN_PROGRAM_ID,
-  }).instruction()
+export const syncRewardsIx = (l: TestLaunch) => sdk.syncRewardsIx(conn, l.mint, l.feeVault)
 
 /** Keeper mode: deposit `lamports` of wSOL from the depositor's wSOL ATA (wrapping SOL first). */
-export async function depositRewardsIxs(l: TestLaunch, depositor: PublicKey, lamports: bigint) {
-  const src = wsolAta(depositor)
-  return [
-    createAssociatedTokenAccountIdempotentInstruction(depositor, src, depositor, NATIVE_MINT, TOKEN_PROGRAM_ID),
-    SystemProgram.transfer({ fromPubkey: depositor, toPubkey: src, lamports }),
-    createSyncNativeInstruction(src, TOKEN_PROGRAM_ID),
-    await program.methods.depositRewards(new BN(lamports.toString())).accountsPartial({
-      depositor, launch: l.launch, rewardsVault: rewardsVaultPda(l.mint), depositorTokenAccount: src,
-      quoteMint: NATIVE_MINT, tokenProgram: TOKEN_PROGRAM_ID,
-    }).instruction(),
-  ]
-}
+export const depositRewardsIxs = (l: TestLaunch, depositor: PublicKey, lamports: bigint) => sdk.depositRewardsIxs(conn, l.mint, depositor, lamports)
 
 /** Claim into the owner's wSOL ATA (kept wrapped so tests can read exact amounts). */
 export async function claimIxs(l: TestLaunch, owner: PublicKey) {
-  const dest = wsolAta(owner)
-  return [
-    createAssociatedTokenAccountIdempotentInstruction(owner, dest, owner, NATIVE_MINT, TOKEN_PROGRAM_ID),
-    await program.methods.claim().accountsPartial({
-      owner, launch: l.launch, holder: holderPda(ata(l.mint, owner)), rewardsAuthority: rewardsAuthorityPda(l.mint),
-      rewardsVault: rewardsVaultPda(l.mint), destination: dest, quoteMint: NATIVE_MINT, tokenProgram: TOKEN_PROGRAM_ID,
-    }).instruction(),
-  ]
+  return (await sdk.claim(conn, { owner, mint: l.mint, unwrap: false })).instructions
 }
 
 export async function tokenBalance(account: PublicKey): Promise<bigint> {

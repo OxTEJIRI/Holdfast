@@ -1,0 +1,35 @@
+{
+  "name": "@holdfast/sdk",
+  "version": "0.1.0",
+  "description": "Holdfast: conviction-weighted rewards for Meteora DBC launches",
+  "license": "ISC",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "0.32.1",
+    "@meteora-ag/cp-amm-sdk": "1.5.1",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13",
+    "@meteora-ag/dynamic-fee-sharing-sdk": "1.1.0",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/web3.js": "^1.99.0",
+    "bn.js": "^5.2.5"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.2.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.4",
+    "chai": "^5.3.3",
+    "mocha": "^11.8.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

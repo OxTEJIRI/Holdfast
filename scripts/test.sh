@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # Integration tests (DESIGN.md §5.6): builds the program, starts a fresh local validator with the
 # real Meteora programs (mainnet binaries + cloned accounts), runs the mocha suite, stops the
-# validator. Rust unit tests (incl. §5.6 test 12) run first via cargo.
+# validator. Rust unit tests (incl. §5.6 test 12) and offline SDK tests run first.
 # Usage: scripts/test.sh [mocha args...]     e.g. scripts/test.sh --grep snipe
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 cargo test --manifest-path programs/holdfast/Cargo.toml --lib --quiet
+pnpm -C packages/sdk -s test   # offline SDK tests (presets vs the DBC SDK's validator, views, errors)
 anchor build
+scripts/sync-idl.sh
 [[ -f fixtures/dbc.so ]] || scripts/fetch-fixtures.sh
 
 if solana cluster-version -u localhost >/dev/null 2>&1; then

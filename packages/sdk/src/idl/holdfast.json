@@ -1,0 +1,1286 @@
+{
+  "address": "E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw",
+  "metadata": {
+    "name": "holdfast",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "claim",
+      "discriminator": [
+        62,
+        198,
+        214,
+        193,
+        213,
+        159,
+        108,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "holder"
+          ]
+        },
+        {
+          "name": "launch",
+          "writable": true,
+          "relations": [
+            "holder"
+          ]
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "holder.token_account",
+                "account": "Holder"
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewards_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "launch.mint",
+                "account": "Launch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewards_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "launch.mint",
+                "account": "Launch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "quote_mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "deposit_rewards",
+      "discriminator": [
+        52,
+        249,
+        112,
+        72,
+        206,
+        161,
+        196,
+        1
+      ],
+      "accounts": [
+        {
+          "name": "depositor",
+          "signer": true
+        },
+        {
+          "name": "launch",
+          "writable": true
+        },
+        {
+          "name": "rewards_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "launch.mint",
+                "account": "Launch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "depositor_token_account",
+          "writable": true
+        },
+        {
+          "name": "quote_mint"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "execute",
+      "docs": [
+        "Token-2022 transfer-hook `Execute` (SPL discriminator)."
+      ],
+      "discriminator": [
+        105,
+        37,
+        101,
+        197,
+        75,
+        251,
+        102,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "source_token"
+        },
+        {
+          "name": "mint",
+          "relations": [
+            "launch"
+          ]
+        },
+        {
+          "name": "destination_token"
+        },
+        {
+          "name": "authority"
+        },
+        {
+          "name": "extra_account_meta_list",
+          "docs": [
+            "call is rejected by the `transferring` check, so its address needs no re-derivation here."
+          ]
+        },
+        {
+          "name": "launch",
+          "writable": true
+        },
+        {
+          "name": "src_holder",
+          "writable": true
+        },
+        {
+          "name": "dst_holder",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "finalize",
+      "discriminator": [
+        171,
+        61,
+        218,
+        56,
+        127,
+        115,
+        12,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "launch",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "relations": [
+            "launch"
+          ]
+        },
+        {
+          "name": "dbc_pool",
+          "relations": [
+            "launch"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_launch",
+      "discriminator": [
+        75,
+        162,
+        31,
+        198,
+        192,
+        109,
+        36,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "signer": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "dbc_pool"
+        },
+        {
+          "name": "dbc_config"
+        },
+        {
+          "name": "launch",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  97,
+                  117,
+                  110,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "extra_account_meta_list",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  116,
+                  114,
+                  97,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewards_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewards_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "quote_mint"
+        },
+        {
+          "name": "quote_token_program"
+        },
+        {
+          "name": "token_2022_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "LaunchParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "register",
+      "discriminator": [
+        211,
+        124,
+        67,
+        15,
+        211,
+        194,
+        178,
+        240
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "launch",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "relations": [
+            "launch"
+          ]
+        },
+        {
+          "name": "token_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "owner"
+              },
+              {
+                "kind": "account",
+                "path": "token_2022_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "token_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_2022_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sync_rewards",
+      "discriminator": [
+        18,
+        47,
+        240,
+        255,
+        79,
+        191,
+        165,
+        54
+      ],
+      "accounts": [
+        {
+          "name": "launch",
+          "writable": true
+        },
+        {
+          "name": "rewards_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "launch.mint",
+                "account": "Launch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewards_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  119,
+                  97,
+                  114,
+                  100,
+                  115,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "launch.mint",
+                "account": "Launch"
+              }
+            ]
+          }
+        },
+        {
+          "name": "quote_mint"
+        },
+        {
+          "name": "dfs_fee_vault",
+          "writable": true
+        },
+        {
+          "name": "dfs_token_vault",
+          "writable": true
+        },
+        {
+          "name": "dfs_fee_vault_authority",
+          "address": "EYqHRdtepv1KKUkPAYMBYpSfiGfNd8sa55ZtswodTfBS"
+        },
+        {
+          "name": "dfs_event_authority",
+          "address": "EjRrm5Ptzzbp4fft5k4oC9LvbXqVA4UV4Sc9RNULDhCA"
+        },
+        {
+          "name": "dfs_program",
+          "address": "dfsdo2UqvwfN8DuUVrMRNfQe11VaiNoKcMqLHVvDPzh"
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "index",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Holder",
+      "discriminator": [
+        37,
+        121,
+        1,
+        40,
+        55,
+        46,
+        199,
+        157
+      ]
+    },
+    {
+      "name": "Launch",
+      "discriminator": [
+        144,
+        51,
+        51,
+        163,
+        206,
+        85,
+        213,
+        38
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "HolderRegistered",
+      "discriminator": [
+        201,
+        78,
+        223,
+        133,
+        103,
+        164,
+        173,
+        136
+      ]
+    },
+    {
+      "name": "HookEvent",
+      "discriminator": [
+        89,
+        15,
+        103,
+        252,
+        121,
+        89,
+        6,
+        154
+      ]
+    },
+    {
+      "name": "LaunchCreated",
+      "discriminator": [
+        59,
+        38,
+        190,
+        230,
+        33,
+        34,
+        89,
+        20
+      ]
+    },
+    {
+      "name": "LaunchFinalized",
+      "discriminator": [
+        133,
+        100,
+        148,
+        180,
+        31,
+        64,
+        210,
+        203
+      ]
+    },
+    {
+      "name": "RewardsAdded",
+      "discriminator": [
+        7,
+        18,
+        157,
+        69,
+        121,
+        115,
+        150,
+        66
+      ]
+    },
+    {
+      "name": "RewardsClaimed",
+      "discriminator": [
+        75,
+        98,
+        88,
+        18,
+        219,
+        112,
+        88,
+        121
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SnipeLocked",
+      "msg": "Snipe-locked: tokens bought in the opening window can't move until the lock ends"
+    },
+    {
+      "code": 6001,
+      "name": "RecipientNotRegistered",
+      "msg": "During the opening window tokens can only go to registered wallets"
+    },
+    {
+      "code": 6002,
+      "name": "MaxWalletExceeded",
+      "msg": "During the opening window a wallet can't hold more than the max-wallet limit"
+    },
+    {
+      "code": 6003,
+      "name": "ParamOutOfBounds",
+      "msg": "Launch parameter out of bounds"
+    },
+    {
+      "code": 6004,
+      "name": "WrongHookProgram",
+      "msg": "Mint's transfer hook is not the Holdfast program"
+    },
+    {
+      "code": 6005,
+      "name": "NotTransferring",
+      "msg": "Hook called outside of a token transfer"
+    },
+    {
+      "code": 6006,
+      "name": "NotFinalized",
+      "msg": "Launch is not finalized yet"
+    },
+    {
+      "code": 6007,
+      "name": "AlreadyFinalized",
+      "msg": "Launch is already finalized"
+    },
+    {
+      "code": 6008,
+      "name": "CurveNotComplete",
+      "msg": "Bonding curve is not complete yet"
+    },
+    {
+      "code": 6009,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6010,
+      "name": "NothingToClaim",
+      "msg": "Nothing to claim"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidDbcAccount",
+      "msg": "Account is not the DBC pool/config for this mint"
+    },
+    {
+      "code": 6012,
+      "name": "MintAuthorityNotRevoked",
+      "msg": "Mint authority must be revoked (fixed supply)"
+    },
+    {
+      "code": 6013,
+      "name": "TradingClosed",
+      "msg": "The bonding phase is over; registration is closed"
+    },
+    {
+      "code": 6014,
+      "name": "WrongFeeMode",
+      "msg": "Instruction not available in this launch's fee mode (DFS vs keeper)"
+    }
+  ],
+  "types": [
+    {
+      "name": "Holder",
+      "docs": [
+        "One per registered token account (Token-2022 ATA). PDA [\"holder\", token_account] — keyed by the",
+        "token account key, never its data, so the DBC/Token-2022 resolver can derive it for a buyer whose",
+        "ATA doesn't exist yet (DESIGN.md §5.3)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Captured at register; Token-2022 ATAs have ImmutableOwner."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "tracked_balance",
+            "type": "u64"
+          },
+          {
+            "name": "points",
+            "type": "u128"
+          },
+          {
+            "name": "last_ts",
+            "type": "i64"
+          },
+          {
+            "name": "unlock_ts",
+            "type": "i64"
+          },
+          {
+            "name": "final_points",
+            "docs": [
+              "Set lazily on first claim after finalize."
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "reward_debt",
+            "type": "u128"
+          },
+          {
+            "name": "claimed",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HolderRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "holder",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "token_account",
+            "type": "pubkey"
+          },
+          {
+            "name": "tracked_balance",
+            "type": "u64"
+          },
+          {
+            "name": "ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HookEvent",
+      "docs": [
+        "Emitted by the transfer hook on every hooked transfer (for indexers / the Arena feed)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "TransferKind"
+              }
+            }
+          },
+          {
+            "name": "source",
+            "type": "pubkey"
+          },
+          {
+            "name": "destination",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "forfeited",
+            "docs": [
+              "Points forfeited by the source on this transfer."
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Launch",
+      "docs": [
+        "One per Holdfast launch. PDA [\"launch\", mint]."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "dbc_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "dbc_config",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_vault",
+            "docs": [
+              "DFS fee vault, or `Pubkey::default()` in keeper (fallback) mode."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "launch_ts",
+            "type": "i64"
+          },
+          {
+            "name": "window_secs",
+            "type": "u32"
+          },
+          {
+            "name": "snipe_lock_secs",
+            "type": "u32"
+          },
+          {
+            "name": "max_wallet_bps",
+            "type": "u16"
+          },
+          {
+            "name": "total_supply",
+            "type": "u64"
+          },
+          {
+            "name": "total_tracked",
+            "type": "u64"
+          },
+          {
+            "name": "total_points",
+            "type": "u128"
+          },
+          {
+            "name": "global_last_ts",
+            "type": "i64"
+          },
+          {
+            "name": "finalized",
+            "type": "bool"
+          },
+          {
+            "name": "final_ts",
+            "type": "i64"
+          },
+          {
+            "name": "final_total_points",
+            "type": "u128"
+          },
+          {
+            "name": "acc_reward_per_point",
+            "docs": [
+              "Q64.64"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "total_rewards_in",
+            "type": "u64"
+          },
+          {
+            "name": "total_rewards_claimed",
+            "type": "u64"
+          },
+          {
+            "name": "holder_count",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LaunchCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "dbc_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "launch_ts",
+            "type": "i64"
+          },
+          {
+            "name": "window_secs",
+            "type": "u32"
+          },
+          {
+            "name": "snipe_lock_secs",
+            "type": "u32"
+          },
+          {
+            "name": "max_wallet_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LaunchFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "final_ts",
+            "type": "i64"
+          },
+          {
+            "name": "final_total_points",
+            "type": "u128"
+          },
+          {
+            "name": "total_tracked",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LaunchParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "window_secs",
+            "type": "u32"
+          },
+          {
+            "name": "snipe_lock_secs",
+            "type": "u32"
+          },
+          {
+            "name": "max_wallet_bps",
+            "docs": [
+              "0 = off, otherwise ≥ 50 bps"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "fee_vault",
+            "docs": [
+              "DFS fee vault (must be the DBC config's fee claimer), or `Pubkey::default()` for keeper mode."
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RewardsAdded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "acc_reward_per_point",
+            "type": "u128"
+          },
+          {
+            "name": "total_rewards_in",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RewardsClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "launch",
+            "type": "pubkey"
+          },
+          {
+            "name": "holder",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "final_points",
+            "type": "u128"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TransferKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Buy"
+          },
+          {
+            "name": "Sell"
+          },
+          {
+            "name": "Transfer"
+          }
+        ]
+      }
+    }
+  ]
+}

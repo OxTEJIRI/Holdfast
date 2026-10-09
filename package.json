@@ -3,5 +3,26 @@
   "private": true,
   "license": "ISC",
   "packageManager": "pnpm@12.10.1",
-  "engines": { "node": ">=22.12" }
+  "engines": {
+    "node": ">=22.12"
+  },
+  "devDependencies": {
+    "@coral-xyz/anchor": "0.32.1",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.5.13",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/web3.js": "^1.99.0",
+    "@types/bn.js": "^5.2.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.4",
+    "bn.js": "^5.2.5",
+    "chai": "^5.3.3",
+    "mocha": "^11.8.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "scripts": {
+    "test": "scripts/test.sh",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
 }

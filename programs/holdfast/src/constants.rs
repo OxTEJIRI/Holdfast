@@ -45,3 +45,15 @@ pub mod token_layout {
     pub const OWNER: usize = 32;
     pub const AMOUNT: usize = 64;
 }
+
+/// Meteora Dynamic Fee Sharing.
+pub mod dfs {
+    use anchor_lang::prelude::*;
+    pub const PROGRAM_ID: Pubkey = pubkey!("dfsdo2UqvwfN8DuUVrMRNfQe11VaiNoKcMqLHVvDPzh");
+    /// PDA ["fee_vault_authority"]
+    pub const FEE_VAULT_AUTHORITY: Pubkey = pubkey!("EYqHRdtepv1KKUkPAYMBYpSfiGfNd8sa55ZtswodTfBS");
+    /// PDA ["__event_authority"]
+    pub const EVENT_AUTHORITY: Pubkey = pubkey!("EjRrm5Ptzzbp4fft5k4oC9LvbXqVA4UV4Sc9RNULDhCA");
+    /// sha256("global:claim_fee")[..8]
+    pub const CLAIM_FEE_DISC: [u8; 8] = [169, 32, 79, 137, 136, 232, 70, 137];
+}

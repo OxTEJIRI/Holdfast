@@ -38,4 +38,16 @@ pub mod holdfast {
     pub fn finalize(ctx: Context<Finalize>) -> Result<()> {
         instructions::finalize::handle_finalize(ctx)
     }
+
+    pub fn sync_rewards(ctx: Context<SyncRewards>, index: u8) -> Result<()> {
+        instructions::sync_rewards::handle_sync_rewards(ctx, index)
+    }
+
+    pub fn deposit_rewards(ctx: Context<DepositRewards>, amount: u64) -> Result<()> {
+        instructions::deposit_rewards::handle_deposit_rewards(ctx, amount)
+    }
+
+    pub fn claim(ctx: Context<Claim>) -> Result<()> {
+        instructions::claim::handle_claim(ctx)
+    }
 }

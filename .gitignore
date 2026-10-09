@@ -1,0 +1,10 @@
+node_modules/
+target/
+.anchor/
+.env*
+*.keypair.json
+id.json
+sim/.keys/
+sim/out/
+fixtures/*.so
+.next/

@@ -1,0 +1,8 @@
+packages:
+  - "packages/*"
+  - "apps/*"
+  - "sim"
+allowBuilds:
+  bigint-buffer: false
+  bufferutil: false
+  utf-8-validate: false

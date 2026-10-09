@@ -8,3 +8,5 @@ sim/.keys/
 sim/out/
 fixtures/*.so
 .next/
+test-ledger/
+packages/spike/.keys/

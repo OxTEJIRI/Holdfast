@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from 'next/font/google'
 import { Ambient } from '@/components/Ambient'
+import { Spotlight } from '@/components/Spotlight'
 import { Header } from '@/components/Header'
 import { Providers } from '@/components/Providers'
 import { GITHUB_URL } from '@/lib/config'
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <Providers>
           <Ambient />
+          <Spotlight />
           <Header />
           <main className="relative mx-auto max-w-6xl px-4 pb-24 pt-8">{children}</main>
           <footer className="relative border-t border-line/60 py-8 text-center text-xs text-faint">

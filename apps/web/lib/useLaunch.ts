@@ -35,7 +35,11 @@ async function loadMeta(conn: import('@solana/web3.js').Connection, mint: Public
   const meta: TokenMeta = { name: md?.name ?? 'Unnamed', symbol: md?.symbol ?? '???' }
   if (md?.uri) {
     try {
-      const json = await (await fetch(md.uri)).json()
+      // Our own metadata links are served from whatever domain launched the token; read them from this one,
+      // so tokens survive a domain change.
+      const u = new URL(md.uri)
+      const src = u.pathname.startsWith('/api/metadata/') ? `${window.location.origin}${u.pathname}${u.search}` : md.uri
+      const json = await (await fetch(src)).json()
       if (typeof json.image === 'string') meta.image = json.image
       if (typeof json.description === 'string') meta.description = json.description
       const hp = json?.properties?.holdfast?.holdersPct

@@ -3,6 +3,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import type { Keypair, Transaction } from '@solana/web3.js'
 import { claim, claimable, crank, explainError, finalize, graduatedPoolAddress, migrate, presets, projectedShare } from '@holdfast/sdk'
 import { useState } from 'react'
+import { celebrate } from '@/components/Celebrate'
 import { useToast } from '@/components/Toast'
 import { Button, Section, Stat } from '@/components/ui'
 import { explorer } from '@/lib/config'
@@ -21,14 +22,17 @@ export function RewardsPanel({ d, now, onDone }: { d: LaunchData; now: number; o
   // who can route fees: the keeper (keeper mode) or the creator, a DFS shareholder (DFS mode)
   const canCrank = !!me && (l.feeMode === 'keeper' ? d.feeClaimer.equals(me) : l.creator.equals(me))
 
-  async function run(key: string, label: string, steps: () => Promise<{ tx: Transaction; signers?: Keypair[] }[]>) {
+  async function run(key: string, label: string, steps: () => Promise<{ tx: Transaction; signers?: Keypair[] }[]>, party?: { text: string; sub: string }) {
     setBusy(key)
     try {
       let last = ''
       const list = await steps()
       if (list.length === 0) toast({ kind: 'info', text: 'Nothing to do right now.' })
       for (const s of list) last = await sendWithWallet(connection, wallet, s.tx, s.signers)
-      if (list.length) toast({ kind: 'ok', text: label, sig: last })
+      if (list.length) {
+        toast({ kind: 'ok', text: label, sig: last })
+        if (party) celebrate(party)
+      }
       onDone()
     } catch (e) {
       toast({ kind: 'error', text: explainError(e) })
@@ -59,14 +63,14 @@ export function RewardsPanel({ d, now, onDone }: { d: LaunchData; now: number; o
       <div className="mt-5 flex flex-wrap gap-2">
         {l.finalized && (
           <Button
-            onClick={() => run('claim', `Claimed ${sol(owed, 6)} SOL`, async () => [{ tx: await claim(connection, { owner: me!, mint: l.mint }) }])}
+            onClick={() => run('claim', `Claimed ${sol(owed, 6)} SOL`, async () => [{ tx: await claim(connection, { owner: me!, mint: l.mint }) }], { text: `+${sol(owed, 6)} SOL`, sub: 'paid for staying' })}
             disabled={!me || owed === 0n || !!busy}
           >
             {busy === 'claim' ? 'Claiming…' : owed > 0n ? `Claim ${sol(owed, 6)} SOL` : 'Nothing to claim'}
           </Button>
         )}
         {d.curveComplete && !l.finalized && (
-          <Button kind="ghost" disabled={!me || !!busy} onClick={() => run('finalize', 'Finalized: conviction frozen', async () => [{ tx: await finalize(connection, l.mint, me!) }])}>
+          <Button kind="ghost" disabled={!me || !!busy} onClick={() => run('finalize', 'Finalized: conviction frozen', async () => [{ tx: await finalize(connection, l.mint, me!) }], { text: 'Conviction frozen', sub: 'rewards are open' })}>
             {busy === 'finalize' ? 'Finalizing…' : 'Finalize'}
           </Button>
         )}
@@ -74,7 +78,7 @@ export function RewardsPanel({ d, now, onDone }: { d: LaunchData; now: number; o
           <Button
             kind="ghost"
             disabled={!me || !!busy}
-            onClick={() => run('migrate', 'Migrated to DAMM v2', async () => [await migrate(connection, { mint: l.mint, payer: me! })])}
+            onClick={() => run('migrate', 'Migrated to DAMM v2', async () => [await migrate(connection, { mint: l.mint, payer: me! })], { text: 'Graduated', sub: 'trading on DAMM v2' })}
           >
             {busy === 'migrate' ? 'Migrating…' : 'Migrate to DAMM v2'}
           </Button>

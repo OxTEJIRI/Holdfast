@@ -2,6 +2,7 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { buy, explainError, forfeitPreview, sell, swapGraduated } from '@holdfast/sdk'
 import { useState } from 'react'
+import { celebrate } from '@/components/Celebrate'
 import { useToast } from '@/components/Toast'
 import { Button, Section } from '@/components/ui'
 import { clock, compact, sol, timeOfDay, tokens } from '@/lib/format'
@@ -32,6 +33,7 @@ export function TradePanel({ d, now, phase, onDone }: { d: LaunchData; now: numb
     try {
       const sig = await sendWithWallet(connection, wallet, await build())
       toast({ kind: 'ok', text: label, sig })
+      if (side === 'buy') celebrate({ text: 'In.', sub: 'conviction starts now' })
       onDone()
     } catch (e) {
       toast({ kind: 'error', text: explainError(e) })

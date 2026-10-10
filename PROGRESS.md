@@ -99,6 +99,10 @@
 - New identity from the name: a *holdfast* is the root that anchors kelp to rock. The app is a kelp forest seen from below: deep-sea teal, light shafts, drifting plankton (`Ambient` canvas), a hero of swaying kelp pinned by holdfasts (`Kelp` canvas), amber for locks (sun through the surface).
 - Type: Bricolage Grotesque (display), Instrument Sans (body), JetBrains Mono. The conviction ring is now a depth dial with tick marks and a glowing bead.
 - New: interactive `HoldSimulator` on the home page (hold time, sell %, sell time → your share of 1 SOL of fees, animated), count-up stats, glass panels, staggered entrances, sonar-ping phase badge, persona cards that flash when a rule blocks someone, preset cards with a mini window/lock/free timeline, drawn icons instead of emoji.
+- Live network pill (cluster, ticking slot, RPC latency, detail panel), Arena marquee ticker, pointer-lit glass cards.
+- **Arena tank** (`BotField`): every bot is a fish in a lane; blocked attempts rush the hook's line and are thrown back with an amber ripple, buys let a bot through, sells send it drifting out and fading, claims release bubbles, graduation dissolves the line.
+- **Growing kelp** on the launch screen: root, stalk and fronds appear as each of the launch transactions confirms; the tip glows when the launch is complete.
+- **Celebrations** (`celebrate()`): a water ripple with a floating amount on claim ("+0.016273 SOL, paid for staying"), finalize, migration, first buy and launch.
 - All motion is paused when the tab is hidden and disabled under `prefers-reduced-motion`.
 
 ## Decisions / open issues

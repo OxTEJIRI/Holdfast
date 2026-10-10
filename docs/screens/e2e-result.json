@@ -1,18 +1,18 @@
 {
-  "startedAt": "2026-10-10T09:20:19.000Z",
-  "wallet": "J3VR7gwGyVmWuGWLjUmnGXA9c97njWTooV47HenPW8mm",
-  "mint": "AGxyjJYRfcDtvmy573NB5WLvuCJxMarRvXyczbHCJmGz",
+  "startedAt": "2026-10-10T14:53:07.773Z",
+  "wallet": "APYR8WdrWYPy9rkxxie7HXiRyN5rfiKzHzLHWXLzYj13",
+  "mint": "6GPt1ftJUEb9VqYH1rCSKqbKmZUPrHbv2U5N6X9opKf9",
   "buy": "Bought with 0.01 SOLView transaction",
   "points": {
-    "before": "54.9T",
-    "after": "128T"
+    "before": "54.2T",
+    "after": "142T"
   },
-  "snipeLock": "Snipe-locked until 10:35:37",
-  "graduation": "5PtFQAQdgEUMRHxYKV6YzqWQYrh4CQ1y1Q9KQVbjYWszTHD8N243wrrckQmrWFDpUmLP72JubxTro86Sw5RatHN1",
+  "snipeLock": "Snipe-locked until 16:08:30",
+  "graduation": "5Vz1LjktwbdLQMoXDwv6RT6cRr7MGQG9mD2TyZeRP1SLgxjJFFY6cxe91X5a2CgDE7yz8QUbfSy1wSELUytwguNY",
   "finalize": "Finalized: conviction frozenView transaction",
   "crank": "Fees routed to holdersView transaction",
-  "claimButton": "Claim 0.016579 SOL",
-  "claim": "Claimed 0.016579 SOLView transaction",
+  "claimButton": "Claim 0.016273 SOL",
+  "claim": "Claimed 0.016273 SOLView transaction",
   "migrate": "Migrated to DAMM v2View transaction",
-  "finishedAt": "2026-10-10T09:23:25.586Z"
+  "finishedAt": "2026-10-10T14:56:14.538Z"
 }

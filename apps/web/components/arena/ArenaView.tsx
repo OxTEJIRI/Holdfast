@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Bar as RBar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { Section } from '@/components/ui'
+import { BotField } from './BotField'
 import type { ArenaEvent, ArenaMeta, ArenaSummary, BotNames, Persona } from '@/lib/arena'
 import { NETWORK, explorer } from '@/lib/config'
 import { clock, pct } from '@/lib/format'
@@ -130,6 +131,8 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
           </span>
         </div>
       </div>
+
+      <BotField events={events} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
         <div className="grid grid-cols-2 gap-3 self-start">

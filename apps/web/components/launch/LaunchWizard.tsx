@@ -7,8 +7,10 @@ import {
   presets, protectionEndsAfterSecs, resolvePreset,
 } from '@holdfast/sdk'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { celebrate } from '@/components/Celebrate'
+import { GrowingKelp } from '@/components/GrowingKelp'
 import { Button, Section } from '@/components/ui'
 import { NETWORK, explorer } from '@/lib/config'
 import { curvePoints } from '@/lib/curve'
@@ -121,6 +123,13 @@ export function LaunchWizard() {
     }
   }
   const allDone = progress.length > 0 && progress.every((p) => p.status === 'done')
+  const celebrated = useRef(false)
+  useEffect(() => {
+    if (allDone && !celebrated.current) {
+      celebrated.current = true
+      celebrate({ text: 'Launched', sub: `${symbol.toUpperCase()} is live` })
+    }
+  }, [allDone, symbol])
 
   return (
     <div className="grid gap-6 lg:grid-cols-[14rem_1fr]">
@@ -292,7 +301,9 @@ export function LaunchWizard() {
               <input value={firstBuy} onChange={(e) => setFirstBuy(e.target.value)} inputMode="decimal" className={input} placeholder="0" disabled={!!launched} />
             </Field>
             {progress.length > 0 && (
-              <ol className="mt-5 space-y-2">
+              <div className="mt-5 flex flex-col items-center gap-6 sm:flex-row sm:items-end">
+                <GrowingKelp done={progress.filter((p) => p.status === 'done').length} total={progress.length} failed={progress.some((p) => p.status === 'failed')} />
+              <ol className="min-w-0 flex-1 space-y-2 self-stretch sm:self-center">
                 {progress.map((p, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm">
                     <span
@@ -315,6 +326,7 @@ export function LaunchWizard() {
                   </li>
                 ))}
               </ol>
+              </div>
             )}
             <div className="mt-6 flex flex-wrap gap-3">
               {allDone && launched ? (

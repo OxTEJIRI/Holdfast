@@ -113,6 +113,13 @@
 - Test suite: 15 Rust + 13 SDK + 48 integration tests (8 security), all green; hook still 12.6k CU. One flaky 6-second-window test was widened.
 - Docs: `README.md` (pitch, results, honeypot argument, Meteora integration, run, limitations), `docs/ARCHITECTURE.md`, `docs/SECURITY.md`.
 
+## Phase 7: Submission pack (written; recording and submitting are the user's)
+
+- `docs/video-script.md`: a 2:45 shot list with narration and prep (a live Fair Launch token for the snipe-lock shot).
+- `docs/pitch-deck.md`: 8 slides with speaker notes.
+- `docs/submission.md`: copy-ready form answers (one-liner, 280-char and long descriptions, Meteora integration, links, deadlines, checklist).
+- Still to do (user): record and upload the video, fill in the X / deck / Colosseum links, submit to Colosseum (Oct 12) and Superteam (Oct 13 06:59 UTC).
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.
@@ -126,4 +133,4 @@
 
 ## Next
 
-Phase 7 (video script, deck, submissions). Old note: Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).
+Record the video, submit, then optionally Phase 8 (mainnet, only with explicit go-ahead). Old note: Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).

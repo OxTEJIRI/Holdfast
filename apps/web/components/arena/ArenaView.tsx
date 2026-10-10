@@ -80,7 +80,7 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
     <div className="space-y-6">
       <div className="flex flex-wrap items-end gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">The Arena</h1>
+          <h1 className="display text-5xl font-extrabold tracking-tight">The <span className="text-grad">Arena</span></h1>
           <p className="mt-1 max-w-2xl text-muted">
             27 bots, one real launch on {summary.network}. Snipers, a bundler, a whale and flippers against ten patient holders. Replayed from the
             recorded run; every trade is on-chain.
@@ -113,7 +113,7 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
           <div className="absolute inset-y-0 left-0 bg-amber/25" style={{ width: `${(W / end) * 100}%` }} />
           <div className="absolute inset-y-0 bg-amber/10" style={{ left: `${(W / end) * 100}%`, width: `${((P - W) / end) * 100}%` }} />
           {graduatedAt !== undefined && <div className="absolute inset-y-0 w-0.5 bg-teal" style={{ left: `${(graduatedAt / end) * 100}%` }} />}
-          <div className="absolute inset-y-0 w-0.5 bg-fg transition-[left] duration-300" style={{ left: `${Math.min(100, (t / end) * 100)}%` }} />
+          <div className="absolute inset-y-0 w-0.5 bg-teal shadow-[0_0_12px_2px_rgba(110,231,196,0.9)] transition-[left] duration-300" style={{ left: `${Math.min(100, (t / end) * 100)}%` }} />
         </div>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
           <span>
@@ -136,11 +136,12 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
           {PERSONAS.map((p) => {
             const x = tally.get(p.key)!
             const blocked = Object.entries(x.blocked)
+            const nBlocked = blocked.reduce((a, [, n]) => a + n, 0)
             return (
-              <div key={p.key} className="card p-4">
+              <div key={`${p.key}-${nBlocked}`} className={`card p-4 ${nBlocked ? 'flash' : ''}`}>
                 <div className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: p.color }} />
-                  <span className="font-semibold">{p.title}</span>
+                  <span className="display text-lg font-bold">{p.title}</span>
                 </div>
                 <div className="mt-0.5 text-xs text-faint">{p.who}</div>
                 <div className="num mt-3 grid grid-cols-2 gap-1 text-xs text-muted">
@@ -148,8 +149,8 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
                   <span>sells {x.sells}</span>
                 </div>
                 {blocked.map(([reason, n]) => (
-                  <div key={reason} className="num mt-1 text-xs text-amber">
-                    ✋ {reason} ×{n}
+                  <div key={reason} className="num mt-1 flex items-center gap-1.5 text-xs text-amber">
+                    <BlockedIcon /> {reason} ×{n}
                   </div>
                 ))}
                 {x.claimed > 0 && <div className="num mt-1 text-xs text-teal">claimed {x.claimed.toFixed(5)} SOL</div>}
@@ -168,7 +169,7 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
                 }`}
               >
                 <span className="num w-12 shrink-0 text-right text-xs text-faint">{clock(e.t)}</span>
-                <span className="w-4 shrink-0">{e.kind === 'blocked' ? '✋' : e.kind === 'claim' ? '◎' : e.kind === 'error' ? '!' : '·'}</span>
+                <span className="grid w-4 shrink-0 place-items-center">{e.kind === 'blocked' ? <BlockedIcon /> : e.kind === 'claim' ? <span className="h-2 w-2 rounded-full bg-teal" /> : e.kind === 'error' ? '!' : <span className="h-1 w-1 rounded-full bg-faint" />}</span>
                 <span className={`min-w-0 flex-1 ${e.kind === 'blocked' ? 'text-amber' : e.kind === 'phase' || e.kind === 'graduate' ? 'font-medium' : 'text-muted'}`}>
                   {e.bot && <span className="mr-1.5 font-mono text-xs text-fg">{e.bot}</span>}
                   {e.message}
@@ -205,6 +206,15 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
         )}
       </div>
     </div>
+  )
+}
+
+function BlockedIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-label="blocked">
+      <circle cx="8" cy="8" r="6" />
+      <path d="M3.8 12.2 12.2 3.8" />
+    </svg>
   )
 }
 
@@ -245,11 +255,11 @@ function WhoGotPaid({ summary, show, onShow }: { summary: ArenaSummary; show: bo
           </div>
           <div className="space-y-3 text-sm">
             <div>
-              <div className="num text-3xl font-semibold text-teal">{holders.perSol.toFixed(1)}</div>
+              <div className="num display text-5xl font-extrabold text-grad">{holders.perSol.toFixed(1)}</div>
               <div className="text-muted">mSOL of rewards per SOL for holders</div>
             </div>
             <div>
-              <div className="num text-3xl font-semibold">0</div>
+              <div className="num display text-5xl font-extrabold">0</div>
               <div className="text-muted">for snipers and flippers: dumping forfeits every point</div>
             </div>
             <p className="text-xs text-faint">

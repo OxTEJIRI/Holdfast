@@ -94,6 +94,13 @@
 - The app confirms by polling signature status (the public RPC refuses websockets under load) and polls every 8 s (leaderboard every 30 s).
 - Deployed to Vercel (root directory `apps/web`). Checked live: every route returns 200, the SSE replay streams, the Arena replay runs to completion, and the token page reads on-chain devnet state with no page errors.
 
+## Web redesign (post-Phase 5)
+
+- New identity from the name: a *holdfast* is the root that anchors kelp to rock. The app is a kelp forest seen from below: deep-sea teal, light shafts, drifting plankton (`Ambient` canvas), a hero of swaying kelp pinned by holdfasts (`Kelp` canvas), amber for locks (sun through the surface).
+- Type: Bricolage Grotesque (display), Instrument Sans (body), JetBrains Mono. The conviction ring is now a depth dial with tick marks and a glowing bead.
+- New: interactive `HoldSimulator` on the home page (hold time, sell %, sell time → your share of 1 SOL of fees, animated), count-up stats, glass panels, staggered entrances, sonar-ping phase badge, persona cards that flash when a rule blocks someone, preset cards with a mini window/lock/free timeline, drawn icons instead of emoji.
+- All motion is paused when the tab is hidden and disabled under `prefers-reduced-motion`.
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.

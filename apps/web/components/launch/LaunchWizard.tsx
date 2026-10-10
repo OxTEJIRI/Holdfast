@@ -180,8 +180,16 @@ export function LaunchWizard() {
               const p = presets[id]
               return (
                 <button key={id} onClick={() => pickPreset(id)} className={`card p-5 text-left transition ${presetId === id ? 'border-teal' : 'hover:border-teal/40'}`}>
-                  <div className="font-semibold">{p.name}</div>
+                  <div className="display text-xl font-bold">{p.name}</div>
                   <p className="mt-1 text-sm text-muted">{p.tagline}</p>
+                  <div className="mt-4" aria-hidden>
+                    <div className="flex h-3 overflow-hidden rounded-full bg-ink">
+                      <div className="bg-amber" style={{ width: `${(p.rules.windowSecs / 2400) * 100}%` }} />
+                      <div className="bg-amber/40" style={{ width: `${(p.rules.snipeLockSecs / 2400) * 100}%` }} />
+                      <div className="flex-1 bg-teal/60" />
+                    </div>
+                    <div className="mt-1 text-[10px] uppercase tracking-wider text-faint">window · lock · free trading (40 min scale)</div>
+                  </div>
                   <dl className="num mt-4 space-y-1 text-xs text-muted">
                     <Row k="Anti-sniper fee" v={`${p.fee.startBps / 100}% → ${p.fee.endBps / 100}% over ${p.fee.durationSecs}s`} />
                     <Row k="Window / lock" v={`${clock(p.rules.windowSecs)} / ${clock(p.rules.snipeLockSecs)}`} />

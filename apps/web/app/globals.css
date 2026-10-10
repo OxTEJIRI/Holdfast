@@ -1,21 +1,27 @@
 @import "tailwindcss";
 
-/* Holdfast: dark-first, calm, one accent (deep teal). Amber marks locks and warnings. */
+/*
+ * Holdfast: a kelp forest seen from below. A holdfast is the root that keeps kelp anchored to the rock.
+ * Boldness lives in the hero (swaying kelp + light shafts). Everything else stays quiet, deep-water green.
+ * Layout: one calm column of glass panels over a slowly drifting water column.
+ */
 @theme {
-  --color-ink: #0a0f10;
-  --color-panel: #10171a;
-  --color-panel-2: #151e21;
-  --color-line: #1f2b2f;
-  --color-fg: #e4eeec;
-  --color-muted: #8ba29e;
-  --color-faint: #5d726e;
-  --color-teal: #2bc7b0;
-  --color-teal-deep: #0f766e;
-  --color-teal-soft: #134e48;
-  --color-amber: #f2b13b;
-  --color-amber-soft: #3b2e14;
-  --color-red: #f07a6c;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #031014;          /* abyss */
+  --color-panel: #08202a;        /* deep water */
+  --color-panel-2: #0d2c36;      /* raised */
+  --color-line: #164350;
+  --color-fg: #e7f5ef;
+  --color-muted: #8fb5b0;
+  --color-faint: #5d8283;
+  --color-teal: #6ee7c4;         /* sea glass */
+  --color-teal-deep: #137a6a;
+  --color-teal-soft: #0f4a47;
+  --color-kelp: #9bd96b;         /* kelp tip, second hue for gradients */
+  --color-amber: #f6b955;        /* sun through the surface: locks and warnings */
+  --color-amber-soft: #3a2d14;
+  --color-red: #f27c6b;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-head), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -23,8 +29,17 @@
   color-scheme: dark;
 }
 
-body {
+html {
   background: var(--color-ink);
+}
+
+body {
+  background:
+    radial-gradient(1200px 520px at 78% -8%, rgba(110, 231, 196, 0.16), transparent 62%),
+    radial-gradient(900px 480px at 8% 0%, rgba(155, 217, 107, 0.07), transparent 60%),
+    linear-gradient(180deg, #05191f 0%, var(--color-ink) 38%, #020b0e 100%);
+  background-color: var(--color-ink);
+  background-attachment: fixed;
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -33,32 +48,109 @@ body {
 .num {
   font-variant-numeric: tabular-nums;
 }
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
 
+/* glass panel: faint top light, luminous hairline */
 .card {
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  border-radius: 1rem;
+  position: relative;
+  background: linear-gradient(180deg, rgba(20, 60, 72, 0.55), rgba(8, 32, 42, 0.62));
+  border: 1px solid rgba(110, 231, 196, 0.13);
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -24px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+}
+.card-hot {
+  border-color: rgba(110, 231, 196, 0.38);
+  box-shadow: 0 0 0 1px rgba(110, 231, 196, 0.12), 0 0 40px -10px rgba(110, 231, 196, 0.28), 0 18px 40px -24px rgba(0, 0, 0, 0.7);
+}
+
+.text-grad {
+  background: linear-gradient(95deg, var(--color-teal), var(--color-kelp));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* wallet-adapter button in Holdfast colours */
 .wallet-adapter-button {
   font-family: var(--font-sans) !important;
   height: 2.5rem !important;
-  border-radius: 0.75rem !important;
+  border-radius: 0.8rem !important;
   font-size: 0.9rem !important;
+  font-weight: 600 !important;
   padding: 0 1rem !important;
 }
 .wallet-adapter-button-trigger {
-  background: var(--color-teal-deep) !important;
+  background: linear-gradient(135deg, var(--color-teal-deep), #0f9484) !important;
+  box-shadow: 0 0 24px -8px rgba(110, 231, 196, 0.6);
 }
 .wallet-adapter-modal-wrapper {
   background: var(--color-panel) !important;
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
 }
 .rise {
-  animation: rise 0.35s ease-out both;
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.stagger > * {
+  animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.stagger > *:nth-child(2) { animation-delay: 70ms; }
+.stagger > *:nth-child(3) { animation-delay: 140ms; }
+.stagger > *:nth-child(4) { animation-delay: 210ms; }
+.stagger > *:nth-child(5) { animation-delay: 280ms; }
+.stagger > *:nth-child(6) { animation-delay: 350ms; }
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+.ping::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: ping 2s ease-out infinite;
+}
+
+@keyframes flash {
+  0% { box-shadow: 0 0 0 0 rgba(246, 185, 85, 0.65); border-color: rgba(246, 185, 85, 0.9); }
+  100% { box-shadow: 0 0 0 14px rgba(246, 185, 85, 0); }
+}
+.flash {
+  animation: flash 0.9s ease-out;
+}
+
+@keyframes sheen {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.sheen {
+  background-image: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: sheen 3.2s linear infinite;
+}
+
+input[type="range"] {
+  accent-color: var(--color-teal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

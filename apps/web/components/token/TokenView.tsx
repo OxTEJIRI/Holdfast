@@ -42,7 +42,7 @@ export function TokenView({ mint: mintStr }: { mint: string }) {
     refreshBoard()
   }
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6 stagger">
       <div className="flex flex-wrap items-center gap-4">
         {data.meta.image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -51,7 +51,7 @@ export function TokenView({ mint: mintStr }: { mint: string }) {
           <div className="grid h-14 w-14 place-items-center rounded-2xl bg-teal-soft text-lg font-bold text-teal">{data.meta.symbol.slice(0, 2)}</div>
         )}
         <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="display text-3xl font-bold tracking-tight">
             {data.meta.name} <span className="text-muted">${data.meta.symbol}</span>
           </h1>
           <a href={explorer('address', mintStr)} target="_blank" rel="noreferrer" className="font-mono text-xs text-faint hover:text-muted">
@@ -59,17 +59,18 @@ export function TokenView({ mint: mintStr }: { mint: string }) {
           </a>
         </div>
         <span
-          className={`ml-auto rounded-full px-3 py-1 text-xs font-semibold ${
-            phase === 'window' || phase === 'locks' ? 'bg-amber-soft text-amber' : 'bg-teal-soft text-teal'
+          className={`ml-auto inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold ${
+            phase === 'window' || phase === 'locks' ? 'border-amber/40 bg-amber-soft text-amber' : 'border-teal/40 bg-teal-soft text-teal'
           }`}
         >
+          <span className={`ping relative h-2 w-2 rounded-full bg-current ${phase === 'graduated' || phase === 'migrated' ? '' : ''}`} />
           {PHASE_LABEL[phase]}
         </span>
       </div>
 
       <div className="card p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <span className="text-sm text-muted">Bonding curve</span>
+          <span className="display text-sm font-semibold uppercase tracking-[0.14em] text-muted">Bonding curve</span>
           <span className="num text-sm">
             <span className="text-lg font-semibold">{sol(data.quoteReserve, 3)}</span> / {sol(data.threshold, 2)} SOL · {pct(data.progress, 1)}
           </span>

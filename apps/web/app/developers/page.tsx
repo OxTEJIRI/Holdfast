@@ -35,7 +35,7 @@ export default function Developers() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Add Holdfast to your DBC launchpad</h1>
+        <h1 className="display text-5xl font-extrabold leading-tight tracking-tight">Add Holdfast to your <span className="text-grad">DBC launchpad</span></h1>
         <p className="mt-2 max-w-2xl text-muted">
           Three calls with <code className="text-fg">@holdfast/sdk</code>. Your launchpad keeps its curve, its UI and its users; holders get paid for
           staying.
@@ -102,7 +102,7 @@ function Block({ title, children }: { title: string; children: string }) {
   return (
     <section>
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted">{title}</h2>
-      <pre className="overflow-x-auto rounded-2xl border border-line bg-panel p-5 font-mono text-[13px] leading-relaxed text-fg">
+      <pre className="overflow-x-auto rounded-2xl border border-teal/15 bg-[#04171c]/90 p-5 font-mono text-[13px] leading-relaxed text-fg shadow-[0_0_40px_-20px_rgba(110,231,196,0.5)]">
         <code>{children}</code>
       </pre>
     </section>

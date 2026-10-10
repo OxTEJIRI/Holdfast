@@ -82,6 +82,18 @@
 
   See `sim/README.md`. A dedicated RPC would allow faster runs; the `/arena` page replays the recorded events at any speed.
 
+## Phase 5: Web app (done locally; Vercel deploy pending the account)
+
+- `apps/web` (Next.js 15, React 19, Tailwind 4, wallet adapter: Phantom, Solflare, Wallet Standard / Backpack). Dark-first, one teal accent; the conviction ring is the signature visual. Pages:
+  - `/t/[mint]`: live conviction ring (accrues every second), lock countdown, forfeit preview, leaderboard, rules timeline with countdowns and the honeypot bound, trade panel (switches to DAMM v2 after migration), rewards panel (finalize / route fees / claim / migrate);
+  - `/arena`: SSE replay of the recorded devnet run, persona cards, feed, "Who got paid?" chart, final on-chain standings;
+  - `/launch`: six-step wizard with a live curve preview; the metadata uri is served statelessly by `/api/metadata/[mint]`;
+  - `/` and `/developers`.
+- **DoD verified in a real browser on devnet** (`apps/web/e2e/devnet-flow.ts`, headless Chromium + burner wallet). A fresh wallet launched through the wizard, bought (auto-registered), watched points grow (54.9T → 128T), got "Snipe-locked until 10:35:37", then after graduation finalized, routed fees, claimed 0.016579 SOL and migrated. Results and screenshots: `docs/screens/`.
+- SDK: `createLaunch` takes an optional `mintKeypair` (the metadata uri contains the mint address).
+- The app confirms by polling signature status (the public RPC refuses websockets under load) and polls every 8 s (leaderboard every 30 s).
+- Not done: the Vercel deployment needs the user's account (steps in `apps/web/README.md`).
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.
@@ -93,6 +105,6 @@
 - `packages/spike` targets the Phase 0 program (its standalone `initialize_extra_account_meta_list` no longer exists). It is kept as the Phase 0 record.
 - §13 limitations to state in the README: bonding-phase trades must go through `@holdfast/sdk` (V4); only registered ATAs earn points.
 
-## Next: Phase 5 (web app)
+## Next
 
-§7, in this order: `/t/[mint]` → `/arena` (replays `docs/arena/devnet/events.jsonl` over SSE) → `/launch` → `/` → `/developers`. Deploy to Vercel.
+Deploy `apps/web` to Vercel (user's account), then Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).

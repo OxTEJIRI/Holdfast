@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-10T09:20:19.000Z",
+  "wallet": "J3VR7gwGyVmWuGWLjUmnGXA9c97njWTooV47HenPW8mm",
+  "mint": "AGxyjJYRfcDtvmy573NB5WLvuCJxMarRvXyczbHCJmGz",
+  "buy": "Bought with 0.01 SOLView transaction",
+  "points": {
+    "before": "54.9T",
+    "after": "128T"
+  },
+  "snipeLock": "Snipe-locked until 10:35:37",
+  "graduation": "5PtFQAQdgEUMRHxYKV6YzqWQYrh4CQ1y1Q9KQVbjYWszTHD8N243wrrckQmrWFDpUmLP72JubxTro86Sw5RatHN1",
+  "finalize": "Finalized: conviction frozenView transaction",
+  "crank": "Fees routed to holdersView transaction",
+  "claimButton": "Claim 0.016579 SOL",
+  "claim": "Claimed 0.016579 SOLView transaction",
+  "migrate": "Migrated to DAMM v2View transaction",
+  "finishedAt": "2026-10-10T09:23:25.586Z"
+}

@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Holdfast: dark-first, calm, one accent (deep teal). Amber marks locks and warnings. */
+@theme {
+  --color-ink: #0a0f10;
+  --color-panel: #10171a;
+  --color-panel-2: #151e21;
+  --color-line: #1f2b2f;
+  --color-fg: #e4eeec;
+  --color-muted: #8ba29e;
+  --color-faint: #5d726e;
+  --color-teal: #2bc7b0;
+  --color-teal-deep: #0f766e;
+  --color-teal-soft: #134e48;
+  --color-amber: #f2b13b;
+  --color-amber-soft: #3b2e14;
+  --color-red: #f07a6c;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+}
+
+/* wallet-adapter button in Holdfast colours */
+.wallet-adapter-button {
+  font-family: var(--font-sans) !important;
+  height: 2.5rem !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.9rem !important;
+  padding: 0 1rem !important;
+}
+.wallet-adapter-button-trigger {
+  background: var(--color-teal-deep) !important;
+}
+.wallet-adapter-modal-wrapper {
+  background: var(--color-panel) !important;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.rise {
+  animation: rise 0.35s ease-out both;
+}

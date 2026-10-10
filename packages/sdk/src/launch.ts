@@ -51,6 +51,8 @@ export type CreateLaunchParams = {
   keeper?: PublicKey
   /** creator's first buy in SOL; build it with `prepared.buildFirstBuy()` once Tx C has landed */
   firstBuySol?: number
+  /** use this keypair for the new mint (e.g. to put the mint address in the metadata uri); default: random */
+  mintKeypair?: Keypair
 }
 
 export type PreparedLaunch = {
@@ -74,7 +76,7 @@ export async function createLaunch(conn: Connection, p: CreateLaunchParams): Pro
   const feeMode = p.feeMode ?? defaultFeeMode(p.network)
   const resolved = resolvePreset(p.preset, p.overrides, p.network)
   const configKp = Keypair.generate()
-  const mintKp = Keypair.generate()
+  const mintKp = p.mintKeypair ?? Keypair.generate()
   const mint = mintKp.publicKey
   const config = configKp.publicKey
   const pool = deriveDbcPoolAddress(NATIVE_MINT, mint, config)

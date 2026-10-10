@@ -1,7 +1,7 @@
 /** Copies a finished run into docs/arena/<network>/ and renders README.md ("Who got paid?"). */
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { NETWORK, OUT_DIR, SIM_DIR } from './lib'
+import { NETWORK, OUT_DIR, SIM_DIR, loadBots } from './lib'
 
 type Row = { persona: string; bots: number; investedSol: number; proceedsSol: number; rewardsSol: number; rewardsPerSol: number; blocked: Record<string, number> }
 const summary = JSON.parse(readFileSync(join(OUT_DIR, 'summary.json'), 'utf8'))
@@ -9,6 +9,8 @@ const arena = JSON.parse(readFileSync(join(OUT_DIR, 'arena.json'), 'utf8'))
 const dest = join(SIM_DIR, '..', 'docs', 'arena', NETWORK)
 mkdirSync(dest, { recursive: true })
 for (const f of ['events.jsonl', 'summary.json', 'arena.json']) copyFileSync(join(OUT_DIR, f), join(dest, f))
+// public names for the bots' wallets (no secrets), so the web leaderboard can label them
+writeFileSync(join(dest, 'bots.json'), JSON.stringify(Object.fromEntries(loadBots().map((b) => [b.kp.publicKey.toBase58(), { name: b.name, persona: b.persona }])), null, 2))
 
 const label: Record<string, string> = {
   holder: 'Holders (buy small clips, never sell)', whale: 'Whale (8% after the window)', sniper: 'Snipers (buy at t+2 s, dump ASAP)',

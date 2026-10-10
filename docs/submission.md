@@ -14,13 +14,13 @@ Copy-ready answers for the Colosseum and Superteam forms. Fill the three blanks 
 | Field | Value |
 |---|---|
 | Project name | Holdfast |
-| Website | https://hold-fast-mauve.vercel.app |
+| Website | https://useholdfast.vercel.app |
 | GitHub | https://github.com/OxTEJIRI/Holdfast (public) |
 | Demo video | **TODO** |
 | Deck | **TODO**: the video, or a shared copy of `docs/pitch-deck.md` |
 | X (Twitter) | **TODO** |
 | Program (devnet) | `E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw` |
-| Arena run (proof) | https://hold-fast-mauve.vercel.app/arena · https://github.com/OxTEJIRI/Holdfast/tree/main/docs/arena/devnet |
+| Arena run (proof) | https://useholdfast.vercel.app/arena · https://github.com/OxTEJIRI/Holdfast/tree/main/docs/arena/devnet |
 
 ## One-liner (≤ 100 chars)
 

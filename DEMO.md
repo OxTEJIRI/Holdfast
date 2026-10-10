@@ -2,7 +2,7 @@
 
 This is the exact plan for the submission video: what to set up, what to click, and what to say. The finished video is about **3 minutes**. You record it in **one Loom session**, pausing during the waits so no editing is needed.
 
-The live app is **https://hold-fast-mauve.vercel.app** (devnet). The video has two halves:
+The live app is **https://useholdfast.vercel.app** (devnet). The video has two halves:
 
 - **The tour** (about 1:40): the home page, then the Arena replay of the 27-bot run.
 - **The live launch** (about 1:20): you launch your own token on camera, get snipe-locked, graduate it, and claim rewards.
@@ -24,10 +24,10 @@ The live app is **https://hold-fast-mauve.vercel.app** (devnet). The video has t
 - Set the window to roughly **1440 × 900** at **100% zoom**. Hide the bookmarks bar (Ctrl+Shift+B).
 - Turn on Windows **Focus assist** (Do not disturb), so no notifications pop up.
 - Open these tabs, in this order:
-  1. https://hold-fast-mauve.vercel.app
-  2. https://hold-fast-mauve.vercel.app/arena
-  3. https://hold-fast-mauve.vercel.app/launch
-  4. https://hold-fast-mauve.vercel.app/developers
+  1. https://useholdfast.vercel.app
+  2. https://useholdfast.vercel.app/arena
+  3. https://useholdfast.vercel.app/launch
+  4. https://useholdfast.vercel.app/developers
 - On the **launch** tab, click **Select Wallet** → Phantom → Connect. The top right then shows your address.
 
 ### 0.3 Recorder

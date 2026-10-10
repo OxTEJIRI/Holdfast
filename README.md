@@ -4,7 +4,7 @@
 
 Holdfast is a plug-in conviction layer for [Meteora Dynamic Bonding Curve](https://docs.meteora.ag/core-products/dbc/what-is-dbc) launches. A Token-2022 transfer hook scores every holder by *how much × how long* they hold. It blocks snipe-and-dump in the first minutes, and it turns that score into a perpetual share of the launch's trading fees: first from the bonding curve, then, after graduation, from the DAMM v2 pool.
 
-- **Live app (devnet):** https://hold-fast-mauve.vercel.app
+- **Live app (devnet):** https://useholdfast.vercel.app
 - **Program (devnet):** [`E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw`](https://explorer.solana.com/address/E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw?cluster=devnet)
 - **Demo video:** _link to be added_
 - **Repo:** https://github.com/OxTEJIRI/Holdfast
@@ -28,7 +28,7 @@ On a bonding-curve launch the people who make money are the fastest, not the mos
 
 ### Proof: the Arena
 
-27 bots ran one real launch on devnet. The run was recorded and can be replayed at [/arena](https://hold-fast-mauve.vercel.app/arena); the full results are in [docs/arena/devnet](docs/arena/devnet/README.md).
+27 bots ran one real launch on devnet. The run was recorded and can be replayed at [/arena](https://useholdfast.vercel.app/arena); the full results are in [docs/arena/devnet](docs/arena/devnet/README.md).
 
 | Persona | Behaviour | Blocked by Holdfast | Rewards per SOL invested |
 |---|---|---|---:|

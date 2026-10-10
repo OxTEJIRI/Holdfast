@@ -82,7 +82,7 @@
 
   See `sim/README.md`. A dedicated RPC would allow faster runs; the `/arena` page replays the recorded events at any speed.
 
-## Phase 5: Web app ✅ done — live at https://hold-fast-mauve.vercel.app
+## Phase 5: Web app ✅ done — live at https://useholdfast.vercel.app
 
 - `apps/web` (Next.js 15, React 19, Tailwind 4, wallet adapter: Phantom, Solflare, Wallet Standard / Backpack). Dark-first, one teal accent; the conviction ring is the signature visual. Pages:
   - `/t/[mint]`: live conviction ring (accrues every second), lock countdown, forfeit preview, leaderboard, rules timeline with countdowns and the honeypot bound, trade panel (switches to DAMM v2 after migration), rewards panel (finalize / route fees / claim / migrate);

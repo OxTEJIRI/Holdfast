@@ -118,4 +118,4 @@ await claim(conn, { owner, mint })               // after graduation
 - **AI launch copilot:** describe the launch in plain English and get a validated preset.
 
 **Holdfast. Launches that reward the people who stay.**
-Live: https://hold-fast-mauve.vercel.app · Code: https://github.com/OxTEJIRI/Holdfast
+Live: https://useholdfast.vercel.app · Code: https://github.com/OxTEJIRI/Holdfast

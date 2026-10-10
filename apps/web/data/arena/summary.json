@@ -1,0 +1,91 @@
+{
+  "network": "devnet",
+  "mint": "APiwgUykFZShEoiYR35MVa2P7HJbjHyHDorQ38M2cTtd",
+  "speed": 2,
+  "durationSecs": 599,
+  "rpcCalls": 1346,
+  "rewardsPaidSol": {
+    "round1BondingFees": 0.025008435,
+    "round2LpFees": 0.001845635
+  },
+  "personas": [
+    {
+      "persona": "holder",
+      "bots": 10,
+      "investedSol": 0.6,
+      "proceedsSol": 0,
+      "rewardsSol": 0.021545998,
+      "rewardsPerSol": 0.035909996666666666,
+      "blocked": {}
+    },
+    {
+      "persona": "whale",
+      "bots": 1,
+      "investedSol": 0.10556394,
+      "proceedsSol": 0,
+      "rewardsSol": 0.005308072,
+      "rewardsPerSol": 0.05028300383634791,
+      "blocked": {
+        "MaxWalletExceeded": 1
+      }
+    },
+    {
+      "persona": "sniper",
+      "bots": 3,
+      "investedSol": 0.061485559,
+      "proceedsSol": 0.169126175,
+      "rewardsSol": 0,
+      "rewardsPerSol": 0,
+      "blocked": {
+        "SnipeLocked": 24
+      }
+    },
+    {
+      "persona": "flipper",
+      "bots": 6,
+      "investedSol": 0.36,
+      "proceedsSol": 0.445208715,
+      "rewardsSol": 0,
+      "rewardsPerSol": 0,
+      "blocked": {}
+    },
+    {
+      "persona": "bundler",
+      "bots": 6,
+      "investedSol": 0,
+      "proceedsSol": 0,
+      "rewardsSol": 0,
+      "rewardsPerSol": 0,
+      "blocked": {
+        "RecipientNotRegistered": 5
+      }
+    },
+    {
+      "persona": "closer",
+      "bots": 1,
+      "investedSol": 1.539386298,
+      "proceedsSol": 0,
+      "rewardsSol": 0,
+      "rewardsPerSol": 0,
+      "blocked": {}
+    }
+  ],
+  "holdersVsFlippers": "infinite",
+  "holdersVsSnipers": "infinite",
+  "successMetric": {
+    "rule": "holders' rewards per SOL ≥ 5× flippers' and snipers'",
+    "met": true
+  },
+  "blockedTotal": 30,
+  "keyTxs": {
+    "launch": "https://explorer.solana.com/tx/2pXwQk2JKkiutEn854VFWpV7cUtdJA9WoQcsV3UYDqiVZVi6BRAZiaExo5a5VSGeGGcKUmx36wsxvzD7asX4GXxK?cluster=devnet",
+    "graduation": "https://explorer.solana.com/tx/KW5hBM5pFWsFQfPKdaDqSRBCRNu7xi9fbcZTzj4ixDmndkXmNaPJhyf1GzZpXXYCBo1wHYuj7oUGbDczCxmN3Tn?cluster=devnet",
+    "finalize": "https://explorer.solana.com/tx/4aosJ9LLBoHMEmxdMqWG2SK3BgLSy7Kwc1jMg6tZF492rGnNwB8EMtvqyyydETkffSMDTXQ3fdJm63Z8aWEguw9m?cluster=devnet",
+    "bonding fees": "https://explorer.solana.com/tx/ePujAQ6vocxiCiK4ET8hU9KYzJkfhrJ1P3ZYC2xHMcnDFK51Q1ARR1UEvY3qWHWQaAu9bUX9R5i82agQ57oahcq?cluster=devnet",
+    "migrate": "https://explorer.solana.com/tx/2iU1MncZgezVNBpFSoWuvEb5397jrEuw7HiP4cwvUgLJZ9GWc3Qy4vtQBDu3stXCWH4AWtW5uW2Xg1pSByyb4bRu?cluster=devnet",
+    "claim-1": "https://explorer.solana.com/tx/bLP5NLPrWj5wij9MEWZCXia1wiqs1gyXBtB4jgfrmkqdakjM9P6jtA3Fvx37vV5VFGGYqzVKrERey35mAe99Nkq?cluster=devnet",
+    "LP fees": "https://explorer.solana.com/tx/5dpKhVCfow4k3YbvKNxRBgWgsiB3TvjXCzJP5gHs6eCAxJCc1ofwDvP4cWFGEEMRgNxvAFNCcFWbKf243WT5vqvz?cluster=devnet",
+    "claim-2": "https://explorer.solana.com/tx/5aUyvPgoq9uihn8tqn6kALWALZ8r2heRAgw5wdMjejGFHzcR47rPkZqeXHXZQAgBFsjHr9yY8HjKQcgPBYeYe54r?cluster=devnet"
+  },
+  "explorer": "https://explorer.solana.com/address/APiwgUykFZShEoiYR35MVa2P7HJbjHyHDorQ38M2cTtd?cluster=devnet"
+}

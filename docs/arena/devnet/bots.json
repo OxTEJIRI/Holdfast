@@ -1,0 +1,110 @@
+{
+  "E8Cmo8FtygDtL9hqYPzsSe1bGLLX7hLdzukfQXU7dVK1": {
+    "name": "sniper-1",
+    "persona": "sniper"
+  },
+  "3KLhN6v6KujZQsm221uhPoRyCBQN9fUAm8moARdHsnfV": {
+    "name": "sniper-2",
+    "persona": "sniper"
+  },
+  "HqZZNrpEP6DRrmfFChxZ3Et7vDS5pueCTaYcVwXHv4hP": {
+    "name": "sniper-3",
+    "persona": "sniper"
+  },
+  "EDoEyNwcK6fxEG8bjDMA4ooFfbUvXXHLUCA72YYwqEFp": {
+    "name": "bundler",
+    "persona": "bundler"
+  },
+  "8UwfuHtqpwK7N9pkpmaiU14bkVpGF8BCAM9pVq6SugNo": {
+    "name": "bundle-1",
+    "persona": "bundle"
+  },
+  "6GGMa4JZk1yDeK3VdMCqkVR6Dink7cyJ4twyEPAQ5fEj": {
+    "name": "bundle-2",
+    "persona": "bundle"
+  },
+  "G7UdUuYS8vmNfj3rrLsFv6avcLPqiN5o7ADUVRMYAn7v": {
+    "name": "bundle-3",
+    "persona": "bundle"
+  },
+  "DW8vpZC7ijZ7zrL6xjgtZJah2q2CzVwpeHcR9u3vD15i": {
+    "name": "bundle-4",
+    "persona": "bundle"
+  },
+  "63ukkCVe4pe45aSSk9GnKRPDmTmHfbQsHKsszhHBPytz": {
+    "name": "bundle-5",
+    "persona": "bundle"
+  },
+  "Fs6BhRaBGvsTue7wYT3R1MCpusqzqU8AXZUCC1Wx7pPX": {
+    "name": "whale",
+    "persona": "whale"
+  },
+  "JAUimJVtNtbPW8E1EHKCESvwQfd3wuPpT5JkUZALVTV": {
+    "name": "flipper-1",
+    "persona": "flipper"
+  },
+  "dEzc6xfioBZMBVJCpfEMuegcvPLtSfFLCnaPzRmboGx": {
+    "name": "flipper-2",
+    "persona": "flipper"
+  },
+  "5XzrKEJLwMWGgsFUkoe21Yn1EUZgFsh4QyrV68ZQh5qL": {
+    "name": "flipper-3",
+    "persona": "flipper"
+  },
+  "4Ud1GGfpaZoNi4RToqCzfuR2QE6g4nkCGYoPjuDWkGwa": {
+    "name": "flipper-4",
+    "persona": "flipper"
+  },
+  "2HTtBeiLged17yxac8G55q8zmoXoHPZZmweAYzhdJmby": {
+    "name": "flipper-5",
+    "persona": "flipper"
+  },
+  "CQwy5prz6as4Pa1Ag3CouBSmf1P5tRJvfbbwnKdjJmbW": {
+    "name": "flipper-6",
+    "persona": "flipper"
+  },
+  "2k4FzMWsRFigBeUdGegadYL7x12xHWTAdskfJyDaJUFR": {
+    "name": "holder-1",
+    "persona": "holder"
+  },
+  "5GU6EhfdR8q9GZ1r8s4nWm4cpet89AkkfeWnHRbXrnkX": {
+    "name": "holder-2",
+    "persona": "holder"
+  },
+  "CgViZHwCGvLYp9cvJCVTnN5EzEbi1KjqokCEFAnjxcab": {
+    "name": "holder-3",
+    "persona": "holder"
+  },
+  "A4594QJ5hBiMjxXgMyxv2NB7Jx2kAtvZShxKniMMo1XN": {
+    "name": "holder-4",
+    "persona": "holder"
+  },
+  "9z3a4uS5oMDRGz2HZkQNwTDYmPKTRzSdWFPCs2i2rT83": {
+    "name": "holder-5",
+    "persona": "holder"
+  },
+  "3fRtFUnsxf2yHJ3KXJSSkxPjXbpG7RQzERxyjS4DM8cx": {
+    "name": "holder-6",
+    "persona": "holder"
+  },
+  "E6YLkRvgrv8K8m5TSkp9mqtW7uga8NCZTJCwg4n5DZqh": {
+    "name": "holder-7",
+    "persona": "holder"
+  },
+  "CHNkAVmTwPcEmQhiaGMbvW7BvLKehWfE2ZnvvYgoyjdo": {
+    "name": "holder-8",
+    "persona": "holder"
+  },
+  "68fwxQDyFL9BkyMGeeAUUW9s1itFa8X7ZPf9vEftjFi3": {
+    "name": "holder-9",
+    "persona": "holder"
+  },
+  "9GaZbZ4PxJwPuDr9Zeu7Cm8A6xRvdHAmvk12TNLHQays": {
+    "name": "holder-10",
+    "persona": "holder"
+  },
+  "DipwrjVXv7LM9v6rVTbYSD7u7enMHRkpWjcLkxtb4zv9": {
+    "name": "closer",
+    "persona": "closer"
+  }
+}

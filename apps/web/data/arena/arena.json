@@ -1,0 +1,12 @@
+{
+  "network": "devnet",
+  "mint": "APiwgUykFZShEoiYR35MVa2P7HJbjHyHDorQ38M2cTtd",
+  "pool": "Er1LnnY1MpL7RiJJrfSdo1yVBXpnjskGU9Yxvt7ChKvC",
+  "launch": "5UYuveexn3juD4WW1VBPnPT732RsogeLJW6bPnhNyksB",
+  "feeMode": "keeper",
+  "launchTs": 1791616091,
+  "windowSecs": 90,
+  "snipeLockSecs": 300,
+  "maxWalletBps": 300,
+  "speed": 2
+}

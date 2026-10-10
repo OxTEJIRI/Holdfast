@@ -151,7 +151,7 @@ export default function Home() {
         <ul className="mt-6 grid gap-x-10 gap-y-5 text-sm text-muted sm:grid-cols-2">
           <li><span className="text-fg">Dynamic Bonding Curve:</span> transfer-hook pools, the exponential anti-sniper fee scheduler, dynamic fees.</li>
           <li><span className="text-fg">DAMM v2:</span> graduation into a Compounding pool, with the partner LP permanently locked so its fees flow to holders.</li>
-          <li><span className="text-fg">Dynamic Fee Sharing:</span> one vault splits fees between holders, creator and treasury (mainnet).</li>
+          <li><span className="text-fg">Dynamic Fee Sharing:</span> one vault splits fees between holders, creator and treasury. On devnet, where DFS lacks a needed whitelist entry, a keeper does the split instead.</li>
           <li><span className="text-fg">Token-2022 transfer hook:</span> the Holdfast program scores every transfer, and DBC removes it at graduation.</li>
         </ul>
       </section>

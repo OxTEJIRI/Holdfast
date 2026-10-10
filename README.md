@@ -7,6 +7,9 @@ Holdfast is a plug-in conviction layer for [Meteora Dynamic Bonding Curve](https
 - **Live app (devnet):** https://hold-fast-mauve.vercel.app
 - **Program (devnet):** [`E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw`](https://explorer.solana.com/address/E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw?cluster=devnet)
 - **Demo video:** _link to be added_
+- **Repo:** https://github.com/OxTEJIRI/Holdfast
+
+> **On devnet, rewards were split through a keeper, not Dynamic Fee Sharing.** Devnet's DFS build is missing a whitelist entry that hook pools need, so the creator's wallet claimed the fees and deposited the holders' share. The trustless DFS path is tested against mainnet's program binaries. Details under [Fee modes](#built-deep-into-meteora).
 
 > A *holdfast* is the root-like anchor that keeps kelp fixed to the rock while the tide pulls.
 
@@ -35,6 +38,8 @@ On a bonding-curve launch the people who make money are the fastest, not the mos
 | Bundler (1 + 5 fresh wallets) | buys into unregistered wallets | `RecipientNotRegistered` ×5 | 0 |
 | Flippers (6) | in and out within 30–90 s | none | **0** |
 
+**Why the whale earned the most per SOL:** it was blocked in the window, bought after it, then held. Conviction paid it for holding. Selling would have zeroed it.
+
 Snipers and flippers still sold for more than they paid: Holdfast doesn't stop profit-taking. What it changes is who earns the fee stream, and that went entirely to the wallets that stayed.
 
 ## Provably not a honeypot
@@ -57,10 +62,19 @@ The token page shows the exact moment for every launch.
 |---|---|
 | **Dynamic Bonding Curve** | Transfer-hook pools (Token-2022), `createConfigWithTransferHook`, `swap2WithTransferHook`, the exponential anti-sniper fee scheduler, dynamic fees, `claimPartnerTradingFee2`, curve completion revoking the hook |
 | **DAMM v2** | Graduation via `migrateToDammV2` into a **Compounding** pool. The partner LP is permanently locked and owned by the fee claimer, so its LP fees flow to holders forever. The creator's LP vests. |
-| **Dynamic Fee Sharing** | A PDA fee vault is the DBC fee claimer. It splits fees between the Holdfast rewards PDA (holders), the creator and the treasury, and is funded by `fund_by_claiming_fee` from DBC and DAMM v2. `sync_rewards` CPIs `claim_fee` signed by the rewards PDA. |
+| **Dynamic Fee Sharing** (mainnet mode; devnet uses a keeper, see below) | A PDA fee vault is the DBC fee claimer. It splits fees between the Holdfast rewards PDA (holders), the creator and the treasury, and is funded by `fund_by_claiming_fee` from DBC and DAMM v2. `sync_rewards` CPIs `claim_fee` signed by the rewards PDA. |
 | **Token-2022** | The Holdfast program is the mint's transfer hook (its extra accounts are key-seeded PDAs). |
 
-**Fee modes.** The devnet build of Dynamic Fee Sharing does not whitelist DBC `claim_trading_fee2`, which hook pools need; mainnet's build does ([docs/VERIFICATION.md](docs/VERIFICATION.md), V6). So the devnet demo uses a **keeper mode**: the creator's wallet is the fee claimer and deposits the holders' share. The fully trustless DFS mode is proven end to end against the mainnet program binaries in the test suite.
+**Fee modes.** The devnet build of Dynamic Fee Sharing does not whitelist DBC `claim_trading_fee2`, which hook pools need; mainnet's build does ([docs/VERIFICATION.md](docs/VERIFICATION.md), V6). So **everything on devnet, including the Arena and the live app, splits rewards through a keeper**: the creator's wallet is the fee claimer and deposits the holders' share with `deposit_rewards`. The fully trustless DFS mode (`sync_rewards`) is proven end to end against the mainnet program binaries in the test suite, and it is what a mainnet launch uses.
+
+**Program IDs.**
+
+| Program | Address |
+|---|---|
+| Holdfast (devnet) | `E5AkJh1QFPsVTBf6E3Z9MfUWENtb82TGK1hoytkKTEGw` |
+| Meteora Dynamic Bonding Curve | `dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN` |
+| Meteora DAMM v2 | `cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG` |
+| Meteora Dynamic Fee Sharing | `dfsdo2UqvwfN8DuUVrMRNfQe11VaiNoKcMqLHVvDPzh` |
 
 ## Integrate it: three calls
 

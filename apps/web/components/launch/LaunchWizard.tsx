@@ -335,7 +335,7 @@ export function LaunchWizard() {
                 </Link>
               ) : (
                 <Button onClick={launch} disabled={running}>
-                  {running ? 'Launching…' : !wallet.publicKey ? 'Connect a wallet' : progress.some((p) => p.status === 'failed') ? 'Retry' : `Launch (${progress.length || 3} signatures)`}
+                  {running ? 'Launching…' : !wallet.publicKey ? 'Connect a wallet' : progress.some((p) => p.status === 'failed') ? 'Retry' : `Launch (${progress.length || (NETWORK === 'devnet' ? 2 : 3) + (Number(firstBuy) > 0 ? 1 : 0)} signatures)`}
                 </Button>
               )}
             </div>

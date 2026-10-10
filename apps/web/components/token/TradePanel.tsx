@@ -48,7 +48,7 @@ export function TradePanel({ d, now, phase, onDone }: { d: LaunchData; now: numb
     const owner = wallet.publicKey!
     return run(
       `Bought with ${amount} SOL${!h && !onDamm ? ' (wallet registered)' : ''}`,
-      () => (onDamm ? swapGraduated(connection, { owner, mint, solIn: amount, slippageBps: SLIPPAGE_BPS }) : buy(connection, { owner, mint, solIn: amount, slippageBps: SLIPPAGE_BPS })),
+      () => (onDamm ? swapGraduated(connection, { owner, mint, solIn: amount, slippageBps: SLIPPAGE_BPS }) : buy(connection, { owner, mint, solIn: amount, slippageBps: SLIPPAGE_BPS, partialFill: true })),
     )
   }
   const doSell = () => {

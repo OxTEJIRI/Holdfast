@@ -1,5 +1,7 @@
 # Demo video script
 
+> **The step-by-step recording guide is [DEMO.md](../DEMO.md).** This file is the shorter shot list.
+
 Target length: **2:45** (about 380 words of narration at a calm pace). Screen recording of https://hold-fast-mauve.vercel.app, with your voice over it. Every number on screen is from real devnet transactions.
 
 ## Before you record

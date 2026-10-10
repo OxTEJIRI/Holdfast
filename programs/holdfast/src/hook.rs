@@ -83,7 +83,7 @@ pub fn handle_execute(ctx: Context<Execute>, amount: u64) -> Result<()> {
 
     let mut forfeited = 0;
     if let Some(mut src) = load_holder(&ctx.accounts.src_holder, &launch_key, &source_key)? {
-        forfeited = on_outgoing(launch, &mut src, amount, now, src_owner == dst_owner)?;
+        forfeited = on_outgoing(launch, &mut src, amount, now)?;
         save_holder(&ctx.accounts.src_holder, &src)?;
     }
 
@@ -119,14 +119,18 @@ pub fn handle_execute(ctx: Context<Execute>, amount: u64) -> Result<()> {
 }
 
 /// Outgoing transfer from a registered record: enforce the snipe-lock, accrue, then forfeit
-/// points pro rata (skipped for same-owner moves). Returns the points forfeited.
-pub fn on_outgoing(launch: &mut Launch, src: &mut Holder, amount: u64, now: i64, same_owner: bool) -> Result<u128> {
+/// points pro rata. Returns the points forfeited.
+///
+/// There is deliberately no same-owner exemption: `register` only accepts the owner's ATA, so a
+/// same-owner destination is always an untracked account, and exempting it would let a holder park
+/// the bag there, sell it, and keep the points (Phase 6 review; tests/security.test.ts).
+pub fn on_outgoing(launch: &mut Launch, src: &mut Holder, amount: u64, now: i64) -> Result<u128> {
     if now < src.unlock_ts {
         msg!("SnipeLocked: unlocks at unix {}", src.unlock_ts);
         return err!(HoldfastError::SnipeLocked);
     }
     src.accrue(now);
-    let lost = if same_owner { 0 } else { forfeit(src.points, src.tracked_balance, amount) };
+    let lost = forfeit(src.points, src.tracked_balance, amount);
     src.points -= lost; // lost ≤ points by construction
     launch.total_points = launch.total_points.saturating_sub(lost);
     let moved = amount.min(src.tracked_balance);
@@ -197,8 +201,8 @@ mod tests {
         l.accrue_global(1_010);
         on_incoming(&mut l, &mut h, 100, 1_010);
         assert_eq!(h.unlock_ts, 1_310);
-        assert!(on_outgoing(&mut l, &mut h, 10, 1_309, false).is_err());
-        assert!(on_outgoing(&mut l, &mut h, 10, 1_310, false).is_ok());
+        assert!(on_outgoing(&mut l, &mut h, 10, 1_309).is_err());
+        assert!(on_outgoing(&mut l, &mut h, 10, 1_310).is_ok());
     }
 
     #[test]
@@ -207,7 +211,7 @@ mod tests {
         let mut h = holder(1_000);
         on_incoming(&mut l, &mut h, 100, 1_060);
         assert_eq!(h.unlock_ts, 0);
-        assert!(on_outgoing(&mut l, &mut h, 100, 1_060, false).is_ok());
+        assert!(on_outgoing(&mut l, &mut h, 100, 1_060).is_ok());
     }
 
     #[test]
@@ -217,21 +221,24 @@ mod tests {
         l.accrue_global(1_000);
         on_incoming(&mut l, &mut h, 400, 1_000);
         l.accrue_global(1_010);
-        let lost = on_outgoing(&mut l, &mut h, 100, 1_010, false).unwrap();
+        let lost = on_outgoing(&mut l, &mut h, 100, 1_010).unwrap();
         assert_eq!((lost, h.points, h.tracked_balance), (1_000, 3_000, 300));
         assert_eq!((l.total_points, l.total_tracked), (3_000, 300));
         l.accrue_global(1_020);
-        on_outgoing(&mut l, &mut h, 300, 1_020, false).unwrap();
+        on_outgoing(&mut l, &mut h, 300, 1_020).unwrap();
         assert_eq!((h.points, h.tracked_balance, l.total_points, l.total_tracked), (0, 0, 0, 0));
     }
 
     #[test]
-    fn same_owner_moves_keep_points() {
+    fn every_move_out_forfeits_points_with_the_tokens() {
+        // whatever the destination (another owner, or an untracked account of the same owner),
+        // points never stay behind without the tokens that earned them
         let mut l = launch(0, 0);
         let mut h = holder(1_000);
         on_incoming(&mut l, &mut h, 400, 1_000);
-        let lost = on_outgoing(&mut l, &mut h, 100, 1_010, true).unwrap();
-        assert_eq!((lost, h.points, h.tracked_balance), (0, 4_000, 300));
+        let lost = on_outgoing(&mut l, &mut h, 400, 1_010).unwrap();
+        assert_eq!((lost, h.points, h.tracked_balance), (4_000, 0, 0));
+        assert_eq!((l.total_points, l.total_tracked), (0, 0));
     }
 
     #[test]
@@ -240,7 +247,7 @@ mod tests {
         let mut l = launch(0, 0);
         let mut h = holder(1_000);
         on_incoming(&mut l, &mut h, 50, 1_000);
-        on_outgoing(&mut l, &mut h, 80, 1_005, false).unwrap();
+        on_outgoing(&mut l, &mut h, 80, 1_005).unwrap();
         assert_eq!((h.points, h.tracked_balance, l.total_tracked), (0, 0, 0));
     }
 
@@ -263,7 +270,7 @@ mod tests {
             if incoming {
                 on_incoming(&mut l, h, amount, ts);
             } else {
-                on_outgoing(&mut l, h, amount, ts, false).unwrap();
+                on_outgoing(&mut l, h, amount, ts).unwrap();
             }
         }
         l.accrue_global(2_000);
@@ -279,6 +286,6 @@ mod tests {
         let mut h = holder(1_000);
         on_incoming(&mut l, &mut h, 1_000, 1_599); // last second of the window
         assert_eq!(h.unlock_ts, 1_599 + 1_800);
-        assert!(on_outgoing(&mut l, &mut h, 1, 1_000 + 600 + 1_800, false).is_ok());
+        assert!(on_outgoing(&mut l, &mut h, 1, 1_000 + 600 + 1_800).is_ok());
     }
 }

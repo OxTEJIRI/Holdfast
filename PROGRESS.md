@@ -105,6 +105,14 @@
 - **Celebrations** (`celebrate()`): a water ripple with a floating amount on claim ("+0.016273 SOL, paid for staying"), finalize, migration, first buy and launch.
 - All motion is paused when the tab is hidden and disabled under `prefers-reduced-motion`.
 
+## Phase 6: Hardening + docs ✅ done
+
+- Self-review of the program against the spec checklist (account checks, overflow, rounding, double claims, the 40-minute bound). Results are in `docs/SECURITY.md`.
+- **Fixed: hidden-bag forfeiture bypass.** The spec's same-owner exemption (§3.3) let a holder move the bag to an untracked second account, sell it and keep the points (reproduced: tracked 0, points 25e12 kept). Every move out now forfeits. The fix is deployed to devnet (upgraded in place; bytes verified) and pinned by a test plus a Rust unit test.
+- **Retracted:** I first suspected that forged hook accounts could bypass the lock. The tests show Token-2022 already rejects them (`IncorrectAccount`). I reverted an unnecessary on-chain check (+8k CU) and kept 7 forged-account tests as regressions.
+- Test suite: 15 Rust + 13 SDK + 48 integration tests (8 security), all green; hook still 12.6k CU. One flaky 6-second-window test was widened.
+- Docs: `README.md` (pitch, results, honeypot argument, Meteora integration, run, limitations), `docs/ARCHITECTURE.md`, `docs/SECURITY.md`.
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.
@@ -118,4 +126,4 @@
 
 ## Next
 
-Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).
+Phase 7 (video script, deck, submissions). Old note: Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).

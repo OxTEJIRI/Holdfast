@@ -61,7 +61,7 @@ describe('@holdfast/sdk', function () {
       before(async () => {
         ;[alice, bob, closer] = await Promise.all([newActor(), newActor(), newActor(10)])
         const r = await launch('arena', 'localnet', feeMode, {
-          rules: { windowSecs: 6, snipeLockSecs: 6, maxWalletBps: 300 }, thresholdSol: 0.5, fee: { startBps: 100, endBps: 100 },
+          rules: { windowSecs: 15, snipeLockSecs: 15, maxWalletBps: 300 }, thresholdSol: 0.5, fee: { startBps: 100, endBps: 100 },
         })
         mint = r.prepared.mint
         creator = r.creator

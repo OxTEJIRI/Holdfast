@@ -2,6 +2,8 @@
 
 Next.js 15 (App Router), React 19, Tailwind 4, Solana wallet adapter, `@holdfast/sdk`.
 
+Live (devnet): https://hold-fast-mauve.vercel.app
+
 | Route | What |
 |---|---|
 | `/` | pitch, how it works, the provable-safety timeline, Arena results |

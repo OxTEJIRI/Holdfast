@@ -154,3 +154,27 @@ input[type="range"] {
     transition-duration: 0.001ms !important;
   }
 }
+
+@keyframes scan {
+  from { transform: translateX(0); }
+  to { transform: translateX(400%); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* pointer light on glass panels */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(110, 231, 196, 0.13), transparent 70%);
+}
+.card:hover::before {
+  opacity: 1;
+}

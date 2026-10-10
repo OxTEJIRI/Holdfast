@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { ENABLE_BURNER, NETWORK } from '@/lib/config'
+import { ENABLE_BURNER } from '@/lib/config'
+import { NetworkPill } from './NetworkPill'
 
 // wallet button renders differently on server and client: client-only
 const WalletMultiButton = dynamic(() => import('@solana/wallet-adapter-react-ui').then((m) => m.WalletMultiButton), { ssr: false })
@@ -54,9 +55,8 @@ export function Header() {
             </Link>
           ))}
         </nav>
-        <span className="ml-auto hidden rounded-full border border-line px-2.5 py-1 text-xs uppercase tracking-wider text-muted md:inline">
-          {NETWORK}
-        </span>
+        <div className="ml-auto" />
+        <NetworkPill />
         <WalletMultiButton />
         {/* test builds only (burner wallet enabled): lets the browser E2E script read the address */}
         {ENABLE_BURNER && publicKey && <span data-testid="wallet-address" className="hidden">{publicKey.toBase58()}</span>}

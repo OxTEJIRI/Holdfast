@@ -4,6 +4,7 @@ import { join } from 'node:path'
 import { CountUp } from '@/components/CountUp'
 import { HoldSimulator } from '@/components/HoldSimulator'
 import { Kelp } from '@/components/Kelp'
+import { Ticker } from '@/components/Ticker'
 import type { ArenaSummary } from '@/lib/arena'
 
 function arena(): ArenaSummary {
@@ -58,6 +59,19 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      <Ticker
+        items={[
+          `${s.blockedTotal} transfers blocked by the hook`,
+          'snipers: 0 SOL of rewards',
+          `holders: ${per('holder').toFixed(1)} mSOL per SOL`,
+          'flippers: 0 SOL of rewards',
+          'bundler: 5 fresh wallets, 5 rejections',
+          'whale: stopped at 3%, then allowed at minute 2',
+          'hook cost: ~13k compute units per transfer',
+          `${s.rewardsPaidSol.round2LpFees > 0 ? 'fees still flowing after graduation' : 'fees flow after graduation'}`,
+        ]}
+      />
 
       <HoldSimulator />
 

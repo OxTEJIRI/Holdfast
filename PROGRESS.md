@@ -82,7 +82,7 @@
 
   See `sim/README.md`. A dedicated RPC would allow faster runs; the `/arena` page replays the recorded events at any speed.
 
-## Phase 5: Web app (done locally; Vercel deploy pending the account)
+## Phase 5: Web app ✅ done — live at https://hold-fast-mauve.vercel.app
 
 - `apps/web` (Next.js 15, React 19, Tailwind 4, wallet adapter: Phantom, Solflare, Wallet Standard / Backpack). Dark-first, one teal accent; the conviction ring is the signature visual. Pages:
   - `/t/[mint]`: live conviction ring (accrues every second), lock countdown, forfeit preview, leaderboard, rules timeline with countdowns and the honeypot bound, trade panel (switches to DAMM v2 after migration), rewards panel (finalize / route fees / claim / migrate);
@@ -92,7 +92,7 @@
 - **DoD verified in a real browser on devnet** (`apps/web/e2e/devnet-flow.ts`, headless Chromium + burner wallet). A fresh wallet launched through the wizard, bought (auto-registered), watched points grow (54.9T → 128T), got "Snipe-locked until 10:35:37", then after graduation finalized, routed fees, claimed 0.016579 SOL and migrated. Results and screenshots: `docs/screens/`.
 - SDK: `createLaunch` takes an optional `mintKeypair` (the metadata uri contains the mint address).
 - The app confirms by polling signature status (the public RPC refuses websockets under load) and polls every 8 s (leaderboard every 30 s).
-- Not done: the Vercel deployment needs the user's account (steps in `apps/web/README.md`).
+- Deployed to Vercel (root directory `apps/web`). Checked live: every route returns 200, the SSE replay streams, the Arena replay runs to completion, and the token page reads on-chain devnet state with no page errors.
 
 ## Decisions / open issues
 
@@ -107,4 +107,4 @@
 
 ## Next
 
-Deploy `apps/web` to Vercel (user's account), then Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).
+Phase 6 (hardening + README) and Phase 7 (video script, deck, submissions).

@@ -1,0 +1,24 @@
+{
+  "name": "@holdfast/sim",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Holdfast Arena: bot personas that prove the mechanics on devnet (DESIGN.md §8)",
+  "scripts": {
+    "fund": "tsx src/fund.ts",
+    "arena": "tsx src/run.ts",
+    "sweep": "tsx src/sweep.ts",
+    "report": "tsx src/report.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@holdfast/sdk": "workspace:*",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/web3.js": "^1.99.0",
+    "bs58": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

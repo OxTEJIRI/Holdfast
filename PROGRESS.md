@@ -60,16 +60,39 @@
   - 39 integration tests. The 27 program tests now run through the SDK. The 12 SDK tests cover every preset launching on the real DBC program within the size limit, plus buy → snipe-lock → leaderboard → crank → claim in both fee modes.
 - Launch tx sizes: config 717–1,206 bytes (Slow Burn in DFS mode is the largest); pool + launch 1,111–1,155 bytes. Both are under the 1,232-byte limit.
 
+## Phase 4: Arena simulation ✅ done
+
+- `sim/` (uses only `@holdfast/sdk`): `fund` (27 bots: 3 snipers, a bundler + 5 fresh wallets, a whale, 6 flippers, 10 holders, a closer), `arena` (the §8 timeline; `--speed` scales the timeline **and** the launch's window, lock and fee decay), `report` (copies the run to `docs/arena/<network>/` with a "Who got paid?" README), `sweep` (returns leftover SOL).
+- Devnet run (`docs/arena/devnet/`): 90 s window, 300 s lock, 599 s, keeper fee mode.
+  - 30 transfers were blocked: 24 `SnipeLocked`, 5 `RecipientNotRegistered` (the bundler), 1 `MaxWalletExceeded` (the whale's in-window grab).
+  - Holders earned 35.9 mSOL per SOL invested and the whale 50.3. Snipers and flippers earned 0 (they sold, forfeiting all points). The ≥5× metric is met.
+  - Rewards came in two rounds: 0.0250 SOL from bonding fees, then 0.0018 SOL from post-graduation DAMM v2 LP fees.
+  - Honest note: snipers and flippers still profited from the price rising. Holdfast removes their fee share, not their trading profit.
+- SDK additions: `migrate`, `swapGraduated`, `graduatedPoolAddress`, `hookAccounts`.
+  - Hook accounts are now derived locally (no RPC).
+  - The launch's pool and the pool config are cached; the quote uses the local clock.
+  - `autoRegister: true` means "always prepend"; the default checks first.
+  - `patchHookAccounts(tx, mint, source, destination)` no longer takes `conn`.
+- **SDK bug fixed:** `holdfastErrorName` mapped *any* program's raw `0x17xx` code to a Holdfast error (DBC's slippage 6002 showed as `MaxWalletExceeded`). It now maps a code only when the failing program is Holdfast.
+- **Public devnet RPC:** roughly 100 req/10 s per IP, 40 per method and 40 new connections. Twenty-seven bots exceeded it and opening trades landed after the window closed. The sim now:
+  - paces fetches with a token bucket and an in-flight cap;
+  - lets at most 2 bot actions build at once, so they finish in scheduled order;
+  - shares one blockhash and confirms every pending tx with one batched `getSignatureStatuses` poll;
+  - prices trades after the run.
+
+  See `sim/README.md`. A dedicated RPC would allow faster runs; the `/arena` page replays the recorded events at any speed.
+
 ## Decisions / open issues
 
 - **V4:** the DBC SDK can't resolve key-seeded hook accounts (it resolves with default keys). `@holdfast/sdk` `buy`/`sell` patch the hook accounts (`patchHookAccounts`). No on-chain change.
 - **V6:** devnet DFS doesn't whitelist DBC `claim_trading_fee2`. Devnet uses the keeper fallback (`deposit_rewards`); mainnet uses DFS. The program supports both modes (`Launch.fee_vault == default` means keeper mode).
 - Integration tests (§5.6) use mainnet binaries and must clone the DBC pool-authority PDA (it funds migration rent).
-- **Devnet SOL is nearly gone (≈0.19 SOL left).** The Arena (Phase 4) needs ~10–12 devnet SOL.
+- Devnet wallet: ≈14.3 SOL after the Arena and sweep.
+- The web app (Phase 5) should not hit the public devnet RPC hard either: poll moderately and batch account reads.
 - DFS `fund_by_claiming_fee` needs a shareholder signer, so in DFS mode the crank is run by the creator or treasury (or the keeper). A Holdfast proxy instruction signed by the rewards PDA would make it fully permissionless; not built (not in spec).
 - `packages/spike` targets the Phase 0 program (its standalone `initialize_extra_account_meta_list` no longer exists). It is kept as the Phase 0 record.
 - §13 limitations to state in the README: bonding-phase trades must go through `@holdfast/sdk` (V4); only registered ATAs earn points.
 
-## Next: Phase 4 (Arena simulation)
+## Next: Phase 5 (web app)
 
-`sim/fund.ts` and `sim/run.ts` per §8, using only `@holdfast/sdk`; `events.jsonl` and `summary.json`; the ≥5× result. Needs ~10–12 devnet SOL (≈0.19 left).
+§7, in this order: `/t/[mint]` → `/arena` (replays `docs/arena/devnet/events.jsonl` over SSE) → `/launch` → `/` → `/developers`. Deploy to Vercel.

@@ -1,4 +1,5 @@
 /** Turns program/transaction errors into the human-readable text the UI shows (DESIGN.md §5.5). */
+import { HOLDFAST_PROGRAM_ID } from './constants'
 import { IDL } from './program'
 
 const FRIENDLY: Record<string, string> = {
@@ -31,7 +32,8 @@ export function holdfastErrorName(err: unknown): string | undefined {
   const text = [...logsOf(err), String((err as Error)?.message ?? err)].join('\n')
   const named = text.match(/Error Code: (\w+)\./)
   if (named && named[1] in FRIENDLY) return named[1]
-  const hex = text.match(/custom program error: 0x([0-9a-f]+)/i)
+  // raw codes only count when Holdfast itself failed (other programs reuse 6000+ codes)
+  const hex = text.match(new RegExp(`Program ${HOLDFAST_PROGRAM_ID.toBase58()} failed: custom program error: 0x([0-9a-f]+)`, 'i'))
   if (hex) return byCode.get(parseInt(hex[1], 16))
   return undefined
 }

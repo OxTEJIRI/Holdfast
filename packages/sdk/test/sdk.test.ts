@@ -81,9 +81,13 @@ describe('explainError', () => {
     assert.match(explainError(err, { timeZone: 'UTC' }), /^Snipe-locked until \d\d:\d\d:\d\d$/)
   })
 
-  it('maps raw custom error codes via the IDL', () => {
-    assert.equal(holdfastErrorName(new Error('failed: custom program error: 0x1771')), 'RecipientNotRegistered')
-    assert.match(explainError(new Error('custom program error: 0x1772')), /max-wallet/)
+  it('maps raw custom error codes via the IDL, only when Holdfast is the failing program', () => {
+    const holdfastFail = (code: string) => ({ message: 'x', logs: [`Program ${HOLDFAST_PROGRAM_ID.toBase58()} failed: custom program error: ${code}`] })
+    assert.equal(holdfastErrorName(holdfastFail('0x1771')), 'RecipientNotRegistered')
+    assert.match(explainError(holdfastFail('0x1772')), /max-wallet/)
+    // DBC's own 6002 must not be mistaken for MaxWalletExceeded
+    const dbcFail = { message: 'x', logs: ['Program dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN failed: custom program error: 0x1772'] }
+    assert.isUndefined(holdfastErrorName(dbcFail))
   })
 
   it('falls back to common wallet / network errors', () => {

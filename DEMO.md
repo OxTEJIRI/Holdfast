@@ -72,7 +72,7 @@ Go through Part 2 once for real, so you know the flow and your wallet has approv
 
 - **Do:**
   1. Switch to tab 2 (**Arena**).
-  2. Click **20×**, then **Restart**.
+  2. The replay starts on its own at **20×** (about 30 seconds). Click **Restart** so it plays from the beginning while you talk.
   3. Point your cursor at the **tank** while it plays. Snipers (amber fish) rush the **"the hook"** line and bounce off; the bundler's fish stay stuck on the left.
   4. When the line disappears and the label says **"hook revoked: free water"**, the run has graduated.
   5. Scroll down and click **Show them now** under **"Who got paid?"**.
@@ -157,7 +157,7 @@ Do this **immediately**: the badge at the top right must still read **Opening wi
 
 - **Do:** switch to tab 4 (**/developers**) and scroll slowly past the **Three calls** code and the **Safety caps**.
 - **Say:**
-  > "Any Meteora launchpad can add this with three calls from our SDK. It runs on the Dynamic Bonding Curve's transfer-hook pools and anti-sniper fees, graduates into a compounding DAMM v2 pool with the LP locked forever, and splits fees through Dynamic Fee Sharing."
+  > "Any Meteora launchpad can add this with three calls from our SDK. It runs on the Dynamic Bonding Curve's transfer-hook pools and anti-sniper fees, graduates into a compounding DAMM v2 pool with the LP locked forever, and on mainnet splits fees through Dynamic Fee Sharing. On devnet a keeper does that split."
 
 ### Shot 9 · Sign-off (2:55–3:00)
 

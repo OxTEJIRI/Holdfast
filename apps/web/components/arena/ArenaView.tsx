@@ -3,7 +3,7 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
 import { getLeaderboard } from '@holdfast/sdk'
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Bar as RBar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { Section } from '@/components/ui'
 import { BotField } from './BotField'
@@ -25,36 +25,35 @@ const SPEEDS = [4, 8, 20, 60]
 
 type Tally = { buys: number; sells: number; blocked: Record<string, number>; claimed: number }
 
-export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta: ArenaMeta; bots: BotNames }) {
-  const [speed, setSpeed] = useState(8)
+export function ArenaView({ summary, meta, bots, recorded }: { summary: ArenaSummary; meta: ArenaMeta; bots: BotNames; recorded: ArenaEvent[] }) {
+  const [speed, setSpeed] = useState(20)
   const [run, setRun] = useState(0)
   const [events, setEvents] = useState<ArenaEvent[]>([])
   const [done, setDone] = useState(false)
   const [showResults, setShowResults] = useState(false)
-  const esRef = useRef<EventSource | null>(null)
+  const speedRef = useRef(speed)
+  speedRef.current = speed
 
-  const start = useCallback(() => {
-    esRef.current?.close()
+  // Replay in the browser: the recorded run ships with the page, so action starts at once and no
+  // server connection has to stay open. Long quiet stretches (waiting out the locks) are capped at 4 s.
+  useEffect(() => {
     setEvents([])
     setDone(false)
-    const es = new EventSource(`/api/arena/stream?speed=${speed}`)
-    es.onmessage = (m) => {
-      const e = JSON.parse(m.data) as ArenaEvent
-      if (e.kind) setEvents((xs) => [...xs, e])
+    let i = 0
+    let id: ReturnType<typeof setTimeout>
+    const step = () => {
+      const e = recorded[i++]
+      setEvents((xs) => [...xs, e])
+      if (i >= recorded.length) {
+        setDone(true)
+        setShowResults(true)
+        return
+      }
+      id = setTimeout(step, Math.min(4000, ((recorded[i].t - e.t) * 1000) / speedRef.current))
     }
-    es.addEventListener('done', () => {
-      setDone(true)
-      setShowResults(true)
-      es.close()
-    })
-    es.onerror = () => es.close()
-    esRef.current = es
-  }, [speed])
-
-  useEffect(() => {
-    start()
-    return () => esRef.current?.close()
-  }, [start, run])
+    id = setTimeout(step, 250)
+    return () => clearTimeout(id)
+  }, [recorded, run])
 
   const t = events.length ? events[events.length - 1].t : 0
   const graduatedAt = events.find((e) => e.kind === 'graduate')?.t
@@ -84,7 +83,7 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
           <h1 className="display text-5xl font-extrabold tracking-tight">The <span className="text-grad">Arena</span></h1>
           <p className="mt-1 max-w-2xl text-muted">
             27 bots, one real launch on {summary.network}. Snipers, a bundler, a whale and flippers against ten patient holders. Replayed from the
-            recorded run; every trade is on-chain.
+            recorded run at {speed}× speed; every trade is on-chain.
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -184,7 +183,7 @@ export function ArenaView({ summary, meta, bots }: { summary: ArenaSummary; meta
                 </span>
               </li>
             ))}
-            {events.length === 0 && <li className="text-muted">Connecting to the replay…</li>}
+            {events.length === 0 && <li className="text-muted">Starting the replay…</li>}
           </ol>
         </Section>
       </div>
@@ -265,6 +264,10 @@ function WhoGotPaid({ summary, show, onShow }: { summary: ArenaSummary; show: bo
               <div className="num display text-5xl font-extrabold">0</div>
               <div className="text-muted">for snipers and flippers: dumping forfeits every point</div>
             </div>
+            <p className="text-xs text-muted">
+              <span className="text-fg">Why the whale did well:</span> it was blocked in the window, bought after it, then held. Conviction paid it
+              for holding. Selling would have zeroed it.
+            </p>
             <p className="text-xs text-faint">
               {summary.blockedTotal} transfers blocked. Snipers and flippers still sold for more than they paid: Holdfast doesn’t stop profit-taking,
               it reserves the fee stream for those who stay. Rewards: {summary.rewardsPaidSol.round1BondingFees.toFixed(4)} SOL from bonding fees, then{' '}
@@ -283,6 +286,9 @@ function FinalLeaderboard({ mint, bots, network }: { mint: string; bots: BotName
   if (!data || data.length === 0) return null
   return (
     <Section title="Final standings, read from chain" aside={<span className="text-xs text-muted">frozen at graduation</span>}>
+      <p className="mb-3 text-xs text-muted">
+        Why the whale is on top: it was blocked in the window, then held, and conviction paid it for holding. Selling would have zeroed it.
+      </p>
       <div className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
         {data.map((r) => {
           const b = bots[r.owner.toBase58()]

@@ -85,6 +85,8 @@ flowchart LR
 | **Flippers** (6) | **0** | none |
 
 - 30 snipe-and-dump attempts blocked inside the window and locks.
+- The whale was blocked in the window, then held, and conviction paid it for holding. Selling would have zeroed it.
+- On devnet the fee split ran through a keeper; mainnet uses Dynamic Fee Sharing.
 - Fees paid to holders twice: first from the bonding curve, then from DAMM v2 after graduation.
 
 > Notes: Snipers and flippers still sold for more than they paid. We don't stop profit-taking; we make sure the fee stream goes to the people who stayed. The run is replayable at /arena, and every trade is linked on Explorer.

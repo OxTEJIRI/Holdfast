@@ -38,9 +38,9 @@ Holdfast is a plug-in conviction layer for Meteora's Dynamic Bonding Curve. A To
 
 During a short opening window, only registered wallets can receive tokens, a max-wallet cap applies, and buys are snipe-locked. These rules are hard-capped in the program, so 40 minutes after launch at most, the hook cannot reject any transfer. At graduation DBC revokes the hook entirely.
 
-At graduation conviction freezes and becomes a perpetual claim on the launch's fees. Fees come from the bonding curve, then from a Compounding DAMM v2 pool whose partner LP is locked forever. They are routed through Meteora's Dynamic Fee Sharing and paid to holders pro rata in SOL.
+At graduation conviction freezes and becomes a perpetual claim on the launch's fees. Fees come from the bonding curve, then from a Compounding DAMM v2 pool whose partner LP is locked forever. On mainnet they are routed through Meteora's Dynamic Fee Sharing; on devnet, whose DFS build lacks a whitelist entry hook pools need, a keeper does the split. Either way they are paid to holders pro rata in SOL.
 
-We proved it with an Arena: 27 bots on one real devnet launch. Holders earned 35.9 mSOL of rewards per SOL invested, while snipers and flippers earned zero. Holdfast blocked 30 snipe-and-dump attempts.
+We proved it with an Arena: 27 bots on one real devnet launch. Holders earned 35.9 mSOL of rewards per SOL invested, while snipers and flippers earned zero. Holdfast blocked 30 snipe-and-dump attempts. The whale earned the most per SOL because, once blocked in the window, it bought after it and held; selling would have zeroed it.
 
 ## Meteora integration (for "Best use of DBC")
 

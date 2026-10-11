@@ -19,7 +19,8 @@ export type Launch = LaunchAccount & {
 
 export type Holder = HolderAccount & { address: PublicKey }
 
-function view(address: PublicKey, l: LaunchAccount): Launch {
+/** Adds the derived fields (fee mode, window and protection end times) to a decoded Launch account. */
+export function launchView(address: PublicKey, l: LaunchAccount): Launch {
   const start = l.launchTs.toNumber()
   return {
     ...l, address,
@@ -32,7 +33,7 @@ function view(address: PublicKey, l: LaunchAccount): Launch {
 export async function getLaunch(conn: Connection, mint: PublicKey): Promise<Launch | null> {
   const address = launchPda(mint)
   const l = await holdfastProgram(conn).account.launch.fetchNullable(address)
-  return l ? view(address, l) : null
+  return l ? launchView(address, l) : null
 }
 
 /** Holder record by the token account it tracks. */

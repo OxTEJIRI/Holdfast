@@ -27,7 +27,7 @@ export type LaunchData = {
 
 const metaCache = new Map<string, TokenMeta>()
 
-async function loadMeta(conn: import('@solana/web3.js').Connection, mint: PublicKey): Promise<TokenMeta> {
+export async function loadMeta(conn: import('@solana/web3.js').Connection, mint: PublicKey): Promise<TokenMeta> {
   const key = mint.toBase58()
   const hit = metaCache.get(key)
   if (hit) return hit

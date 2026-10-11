@@ -12,6 +12,7 @@ const WalletMultiButton = dynamic(() => import('@solana/wallet-adapter-react-ui'
 const NAV = [
   { href: '/arena', label: 'Arena' },
   { href: '/launch', label: 'Launch' },
+  { href: '/me', label: 'Mine' },
   { href: '/developers', label: 'Developers' },
 ]
 

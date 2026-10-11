@@ -1,10 +1,11 @@
 'use client'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Bar } from '@/components/ui'
 import { explorer } from '@/lib/config'
 import { pct, short, sol } from '@/lib/format'
+import { rememberMint } from '@/lib/recent'
 import { useLaunchData } from '@/lib/useLaunch'
 import { useNow } from '@/lib/useNow'
 import { ConvictionCard } from './ConvictionCard'
@@ -25,6 +26,10 @@ export function TokenView({ mint: mintStr }: { mint: string }) {
   const { publicKey } = useWallet()
   const { data, error, refresh, board, refreshBoard } = useLaunchData(mint)
   const now = useNow()
+  const loaded = !!data
+  useEffect(() => {
+    if (loaded) rememberMint(mintStr)
+  }, [loaded, mintStr])
 
   if (!mint) return <p className="text-muted">That isn’t a valid token address.</p>
   if (data === undefined && !error) return <Skeleton />

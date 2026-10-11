@@ -2,7 +2,7 @@ import type { LaunchData } from '@/lib/useLaunch'
 
 export type Phase = 'window' | 'locks' | 'free' | 'graduated' | 'migrated'
 
-export function phaseOf(d: LaunchData, now: number): Phase {
+export function phaseOf(d: Pick<LaunchData, 'migrated' | 'curveComplete' | 'launch'>, now: number): Phase {
   if (d.migrated) return 'migrated'
   if (d.curveComplete) return 'graduated'
   if (now < d.launch.windowEndsAt) return 'window'

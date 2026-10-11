@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from 'next/font/google'
 import { Ambient } from '@/components/Ambient'
@@ -31,9 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="relative mx-auto max-w-6xl px-4 pb-24 pt-8">{children}</main>
           <footer className="relative border-t border-line/60 py-8 text-center text-xs text-faint">
             Holdfast · built on Meteora DBC, DAMM v2 and Dynamic Fee Sharing · devnet demo, not audited ·{' '}
-            <a className="underline hover:text-muted" href="/#faq">
+            <Link className="underline hover:text-muted" href="/#faq">
               FAQ
-            </a>{' '}
+            </Link>{' '}
             ·{' '}
             <a className="underline hover:text-muted" href={GITHUB_URL}>
               GitHub

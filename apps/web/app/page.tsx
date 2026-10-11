@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { CountUp } from '@/components/CountUp'
+import { Faq } from '@/components/Faq'
 import { HoldSimulator } from '@/components/HoldSimulator'
 import { Kelp } from '@/components/Kelp'
 import { Ticker } from '@/components/Ticker'
@@ -155,6 +156,8 @@ export default function Home() {
           <li><span className="text-fg">Token-2022 transfer hook:</span> the Holdfast program scores every transfer, and DBC removes it at graduation.</li>
         </ul>
       </section>
+
+      <Faq />
     </div>
   )
 }

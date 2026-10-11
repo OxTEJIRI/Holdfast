@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="relative mx-auto max-w-6xl px-4 pb-24 pt-8">{children}</main>
           <footer className="relative border-t border-line/60 py-8 text-center text-xs text-faint">
             Holdfast · built on Meteora DBC, DAMM v2 and Dynamic Fee Sharing · devnet demo, not audited ·{' '}
-            <a className="underline hover:text-muted" href="/developers#faq">
+            <a className="underline hover:text-muted" href="/#faq">
               FAQ
             </a>{' '}
             ·{' '}

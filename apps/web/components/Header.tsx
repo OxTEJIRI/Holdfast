@@ -12,7 +12,7 @@ const WalletMultiButton = dynamic(() => import('@solana/wallet-adapter-react-ui'
 const NAV = [
   { href: '/arena', label: 'Arena' },
   { href: '/launch', label: 'Launch' },
-  { href: '/me', label: 'Mine' },
+  { href: '/me', label: 'My Launches' },
   { href: '/developers', label: 'Developers' },
 ]
 
@@ -62,9 +62,9 @@ export function Header() {
         {/* test builds only (burner wallet enabled): lets the browser E2E script read the address */}
         {ENABLE_BURNER && publicKey && <span data-testid="wallet-address" className="hidden">{publicKey.toBase58()}</span>}
       </div>
-      <nav className="flex gap-1 border-t border-line px-4 py-1 sm:hidden">
+      <nav className="flex gap-0.5 overflow-x-auto border-t border-line px-3 py-1 sm:hidden">
         {NAV.map((n) => (
-          <Link key={n.href} href={n.href} className={`rounded-lg px-3 py-1.5 text-sm ${path?.startsWith(n.href) ? 'text-fg' : 'text-muted'}`}>
+          <Link key={n.href} href={n.href} className={`whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm ${path?.startsWith(n.href) ? 'text-fg' : 'text-muted'}`}>
             {n.label}
           </Link>
         ))}

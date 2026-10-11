@@ -1,4 +1,5 @@
 import { CAPS, HOLDFAST_PROGRAM_ID } from '@holdfast/sdk'
+import { Faq } from '@/components/Faq'
 import { GITHUB_URL } from '@/lib/config'
 
 export const metadata = { title: 'Developers · Holdfast' }
@@ -90,6 +91,8 @@ export default function Developers() {
           placeholder keys. After graduation the hook is gone and the token trades anywhere.
         </p>
       </div>
+
+      <Faq />
 
       <a href={GITHUB_URL} className="inline-block text-sm text-teal underline">
         Source, tests and the full design on GitHub →

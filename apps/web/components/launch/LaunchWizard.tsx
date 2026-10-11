@@ -188,8 +188,23 @@ export function LaunchWizard() {
             {(Object.keys(presets) as PresetId[]).map((id) => {
               const p = presets[id]
               return (
-                <button key={id} onClick={() => pickPreset(id)} className={`card p-5 text-left transition ${presetId === id ? 'border-teal' : 'hover:border-teal/40'}`}>
-                  <div className="display text-xl font-bold">{p.name}</div>
+                <button
+                  key={id}
+                  onClick={() => pickPreset(id)}
+                  aria-pressed={presetId === id}
+                  className={`card p-5 text-left transition ${presetId === id ? 'card-hot outline outline-2 -outline-offset-2 outline-teal' : 'card-pick'}`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="display text-xl font-bold">{p.name}</div>
+                    {presetId === id && (
+                      <span className="flex items-center gap-1 rounded-full bg-teal/15 px-2 py-0.5 text-[11px] font-semibold text-teal">
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="m3 8.5 3.2 3.2L13 4.5" />
+                        </svg>
+                        Selected
+                      </span>
+                    )}
+                  </div>
                   <p className="mt-1 text-sm text-muted">{p.tagline}</p>
                   <div className="mt-4" aria-hidden>
                     <div className="flex h-3 overflow-hidden rounded-full bg-ink">

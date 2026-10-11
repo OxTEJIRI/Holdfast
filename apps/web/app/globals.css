@@ -67,6 +67,10 @@ body {
   box-shadow: 0 0 0 1px rgba(110, 231, 196, 0.12), 0 0 40px -10px rgba(110, 231, 196, 0.28), 0 18px 40px -24px rgba(0, 0, 0, 0.7);
 }
 
+.card-pick:hover {
+  border-color: rgba(110, 231, 196, 0.4);
+}
+
 .text-grad {
   background: linear-gradient(95deg, var(--color-teal), var(--color-kelp));
   -webkit-background-clip: text;
